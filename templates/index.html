@@ -115,6 +115,7 @@
     <div class="work-grid">
       {% for p in projects %}
       <article class="work-card">
+        <a class="work-link" href="{{ url_for('project_detail', project_id=p['id']) }}">
         {% if p['image'] %}
         <img class="work-img" src="{{ url_for('static', filename='uploads/' ~ p['image']) }}"
              alt="{{ p['title'] }}" loading="lazy">
@@ -127,7 +128,9 @@
             {% if p['date_done'] %}<span>📅 {{ p['date_done'] }}</span>{% endif %}
           </p>
           {% if p['description'] %}<p class="work-desc">{{ p['description'] }}</p>{% endif %}
+          <span class="work-more">Read more →</span>
         </div>
+        </a>
       </article>
       {% endfor %}
     </div>
@@ -206,6 +209,18 @@
         <li>📍 {{ settings.availability }}</li>
         {% endif %}
       </ul>
+      {% if settings.linkedin_url or settings.facebook_url %}
+      <div class="social-row">
+        {% if settings.linkedin_url %}
+        <a class="social-btn" href="{{ settings.linkedin_url }}" target="_blank"
+           rel="noopener">in&nbsp;&nbsp;LinkedIn</a>
+        {% endif %}
+        {% if settings.facebook_url %}
+        <a class="social-btn" href="{{ settings.facebook_url }}" target="_blank"
+           rel="noopener">f&nbsp;&nbsp;Facebook</a>
+        {% endif %}
+      </div>
+      {% endif %}
     </div>
     <div>
       {% if sent %}

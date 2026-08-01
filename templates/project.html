@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ p['title'] }} — {{ settings.business_name }}</title>
+<meta name="description" content="{{ p['description']|truncate(180) }}">
+
+{# Open Graph tags — LinkedIn, WhatsApp and Facebook read these to build the
+   preview card when this page is shared. #}
+<meta property="og:type" content="article">
+<meta property="og:title" content="{{ p['title'] }}">
+<meta property="og:description" content="{{ p['description']|truncate(180) if p['description'] else settings.tagline }}">
+<meta property="og:url" content="{{ request.url_root.rstrip('/') }}{{ url_for('project_detail', project_id=p['id']) }}">
+<meta property="og:site_name" content="{{ settings.business_name }}">
+{% if p['image'] %}
+<meta property="og:image" content="{{ request.url_root.rstrip('/') }}{{ url_for('static', filename='uploads/' ~ p['image']) }}">
+<meta name="twitter:card" content="summary_large_image">
+{% else %}
+<meta property="og:image" content="{{ request.url_root.rstrip('/') }}{{ url_for('static', filename='icons/icon-512.png') }}">
+{% endif %}
+
+<link rel="icon" href="{{ url_for('static', filename='logo.svg') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<meta name="theme-color" content="#0d1b2a">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="container topbar-inner">
+    <a class="brand" href="{{ url_for('index') }}">
+      <img src="{{ url_for('static', filename='logo.svg') }}" alt="" class="brand-logo">
+      <span class="brand-text">{{ settings.business_name }}</span>
+    </a>
+    <nav>
+      <a href="{{ url_for('index') }}#work">All Work</a>
+      <a href="{{ url_for('index') }}#contact" class="btn btn-small">Request Service</a>
+    </nav>
+  </div>
+</header>
+
+<section class="section">
+  <div class="container detail-wrap">
+    <a class="back-link" href="{{ url_for('index') }}#work">← Back to our work</a>
+    <h1 class="detail-title">{{ p['title'] }}</h1>
+
+    <p class="work-meta detail-meta">
+      {% if p['machine'] %}<span>🛠️ {{ p['machine'] }}</span>{% endif %}
+      {% if p['client'] %}<span>🏭 {{ p['client'] }}</span>{% endif %}
+      {% if p['service'] %}<span>🔧 {{ p['service'] }}</span>{% endif %}
+      {% if p['date_done'] %}<span>📅 {{ p['date_done'] }}</span>{% endif %}
+    </p>
+
+    {% if p['image'] %}
+    <img class="detail-img"
+         src="{{ url_for('static', filename='uploads/' ~ p['image']) }}"
+         alt="{{ p['title'] }}">
+    {% endif %}
+
+    {% if p['description'] %}
+    <p class="detail-desc">{{ p['description'] }}</p>
+    {% endif %}
+
+    <div class="detail-cta">
+      <a href="{{ url_for('index') }}#contact" class="btn">Request a Similar Service</a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <p>© 2026 {{ settings.business_name }} — {{ settings.tagline }}</p>
+  </div>
+</footer>
+
+</body>
+</html>

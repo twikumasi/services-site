@@ -44,6 +44,37 @@ https://ahautomation.pythonanywhere.com
 with the real username and paths. `pythonanywhere_wsgi.py` holds the exact WSGI
 config to paste on the server.
 
+## LinkedIn
+
+Two separate things:
+
+**Linking to your page** — admin → **Contact** → LinkedIn Page. Paste the full
+address and a LinkedIn button appears in the contact section. Leave it blank to
+hide it.
+
+**Posting a job to LinkedIn** — admin → **Work Done** → the blue **in Share**
+button on any published job. It opens LinkedIn's share window with that job's
+page attached; you add your own comment and press Post. Each job has its own
+public page at `/work/<id>` carrying Open Graph tags, so LinkedIn shows the
+photo, title, and description as a preview card. The same link previews properly
+in WhatsApp and Facebook.
+
+The button only appears on jobs ticked "show on site" — an unpublished job has no
+public page to share, and `/work/<id>` returns 404 for it.
+
+### Why there is no fully automatic posting
+
+Auto-publishing to LinkedIn from the server would need LinkedIn's Marketing API:
+a registered app, company-page verification, an OAuth flow, and access tokens
+that expire and must be refreshed. On top of that, **PythonAnywhere free accounts
+cannot make arbitrary outbound HTTPS requests** — traffic goes through a proxy
+that only allows whitelisted sites, and `api.linkedin.com` is not on it. So a
+server-side LinkedIn integration cannot work on the current plan at all.
+
+The share button achieves the same outcome in two clicks with no tokens to
+maintain, and it lets you write a different comment for each post, which
+performs better on LinkedIn anyway.
+
 ## Installable Android / iPhone app
 
 The site is a **Progressive Web App**: on a phone, the browser offers "Add to

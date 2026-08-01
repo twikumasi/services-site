@@ -102,44 +102,53 @@ INDUSTRIES = [
 
 REQUEST_STATUSES = ["New", "Contacted", "Quoted", "Won", "Closed"]
 
-# Dial codes offered on the request form. Egypt first as the default; the rest
-# cover the markets a beverage/packaging line engineer is most likely to serve.
+# Dial codes offered on the request form. The three home markets come first —
+# Sudan is the default — and everything after that is alphabetical so a visitor
+# can find their country without guessing how the list is grouped.
 COUNTRY_CODES = [
-    ("+20", "🇪🇬 Egypt"),
-    ("+966", "🇸🇦 Saudi Arabia"),
-    ("+971", "🇦🇪 UAE"),
-    ("+974", "🇶🇦 Qatar"),
-    ("+965", "🇰🇼 Kuwait"),
-    ("+973", "🇧🇭 Bahrain"),
-    ("+968", "🇴🇲 Oman"),
-    ("+962", "🇯🇴 Jordan"),
-    ("+961", "🇱🇧 Lebanon"),
-    ("+964", "🇮🇶 Iraq"),
-    ("+963", "🇸🇾 Syria"),
-    ("+967", "🇾🇪 Yemen"),
-    ("+218", "🇱🇾 Libya"),
     ("+249", "🇸🇩 Sudan"),
-    ("+213", "🇩🇿 Algeria"),
-    ("+212", "🇲🇦 Morocco"),
-    ("+216", "🇹🇳 Tunisia"),
-    ("+234", "🇳🇬 Nigeria"),
     ("+233", "🇬🇭 Ghana"),
-    ("+254", "🇰🇪 Kenya"),
-    ("+255", "🇹🇿 Tanzania"),
-    ("+256", "🇺🇬 Uganda"),
-    ("+251", "🇪🇹 Ethiopia"),
-    ("+27", "🇿🇦 South Africa"),
-    ("+90", "🇹🇷 Turkey"),
-    ("+44", "🇬🇧 United Kingdom"),
-    ("+49", "🇩🇪 Germany"),
-    ("+33", "🇫🇷 France"),
-    ("+39", "🇮🇹 Italy"),
-    ("+34", "🇪🇸 Spain"),
-    ("+31", "🇳🇱 Netherlands"),
-    ("+1", "🇺🇸 USA / Canada"),
-    ("+91", "🇮🇳 India"),
-    ("+92", "🇵🇰 Pakistan"),
+    ("+20", "🇪🇬 Egypt"),
+    ("+213", "🇩🇿 Algeria"),
+    ("+973", "🇧🇭 Bahrain"),
+    ("+226", "🇧🇫 Burkina Faso"),
+    ("+237", "🇨🇲 Cameroon"),
+    ("+235", "🇹🇩 Chad"),
     ("+86", "🇨🇳 China"),
+    ("+225", "🇨🇮 Côte d'Ivoire"),
+    ("+291", "🇪🇷 Eritrea"),
+    ("+251", "🇪🇹 Ethiopia"),
+    ("+33", "🇫🇷 France"),
+    ("+49", "🇩🇪 Germany"),
+    ("+91", "🇮🇳 India"),
+    ("+964", "🇮🇶 Iraq"),
+    ("+39", "🇮🇹 Italy"),
+    ("+962", "🇯🇴 Jordan"),
+    ("+254", "🇰🇪 Kenya"),
+    ("+965", "🇰🇼 Kuwait"),
+    ("+961", "🇱🇧 Lebanon"),
+    ("+218", "🇱🇾 Libya"),
+    ("+212", "🇲🇦 Morocco"),
+    ("+31", "🇳🇱 Netherlands"),
+    ("+234", "🇳🇬 Nigeria"),
+    ("+968", "🇴🇲 Oman"),
+    ("+92", "🇵🇰 Pakistan"),
+    ("+974", "🇶🇦 Qatar"),
+    ("+966", "🇸🇦 Saudi Arabia"),
+    ("+221", "🇸🇳 Senegal"),
+    ("+27", "🇿🇦 South Africa"),
+    ("+211", "🇸🇸 South Sudan"),
+    ("+34", "🇪🇸 Spain"),
+    ("+963", "🇸🇾 Syria"),
+    ("+255", "🇹🇿 Tanzania"),
+    ("+228", "🇹🇬 Togo"),
+    ("+216", "🇹🇳 Tunisia"),
+    ("+90", "🇹🇷 Turkey"),
+    ("+971", "🇦🇪 UAE"),
+    ("+256", "🇺🇬 Uganda"),
+    ("+44", "🇬🇧 United Kingdom"),
+    ("+1", "🇺🇸 USA / Canada"),
+    ("+967", "🇾🇪 Yemen"),
 ]
 VALID_DIAL_CODES = {code for code, _ in COUNTRY_CODES}
 
@@ -151,6 +160,8 @@ DEFAULT_SETTINGS = {
     "whatsapp": "",
     "email": "ahmad.hamdi@twellium.com",
     "availability": "Available for on-site work & remote support",
+    "linkedin_url": "",
+    "facebook_url": "",
 }
 
 
@@ -377,6 +388,18 @@ def index():
         country_codes=COUNTRY_CODES,
         sent=request.args.get("sent") == "1",
     )
+
+
+@app.route("/work/<int:project_id>")
+def project_detail(project_id):
+    """A page per job, so each one has its own link to share. LinkedIn reads the
+    Open Graph tags here to build the preview card."""
+    project = get_db().execute(
+        "SELECT * FROM projects WHERE id = ? AND show_on_site = 1", (project_id,)
+    ).fetchone()
+    if project is None:
+        return render_template("not_found.html"), 404
+    return render_template("project.html", p=project)
 
 
 @app.route("/manifest.webmanifest")

@@ -27,6 +27,15 @@
       {% if p['description'] %}<p class="proj-desc">{{ p['description'] }}</p>{% endif %}
       <p class="proj-vis">{{ '✅ Visible on website' if p['show_on_site'] else '🚫 Hidden from website' }}</p>
       <div class="proj-actions">
+        {% if p['show_on_site'] %}
+        {% set page_url = request.url_root.rstrip('/') ~ url_for('project_detail', project_id=p['id']) %}
+        <a class="btn-mini btn-linkedin"
+           href="https://www.linkedin.com/sharing/share-offsite/?url={{ page_url|urlencode }}"
+           target="_blank" rel="noopener"
+           title="Open LinkedIn with this job ready to post">in Share</a>
+        <a class="btn-mini" href="{{ url_for('project_detail', project_id=p['id']) }}"
+           target="_blank">View</a>
+        {% endif %}
         <a href="{{ url_for('project_form', project_id=p['id']) }}" class="btn-mini">Edit</a>
         <form method="POST" action="{{ url_for('delete_project', project_id=p['id']) }}"
               class="inline-form"

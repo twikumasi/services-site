@@ -41,6 +41,23 @@
     <span class="hint">e.g. "Available for on-site work &amp; remote support"</span>
   </label>
 
+  <div class="form-row">
+    <label>LinkedIn Page
+      <input type="url" name="linkedin_url" value="{{ values.linkedin_url }}"
+             placeholder="https://www.linkedin.com/company/your-page">
+      <span class="hint">Paste the full address of your LinkedIn page or profile.</span>
+    </label>
+    <label>Facebook Page
+      <input type="url" name="facebook_url" value="{{ values.facebook_url }}"
+             placeholder="https://www.facebook.com/your-page">
+    </label>
+  </div>
+  <p class="hint">
+    Leave either blank to hide that link. To <strong>post</strong> a job to
+    LinkedIn, go to <strong>Work Done</strong> and use the “in Share” button on
+    that job.
+  </p>
+
   <div class="form-actions">
     <button type="submit" class="btn">Save Changes</button>
     <a href="{{ url_for('index') }}" target="_blank" class="btn btn-grey">View Site ↗</a>

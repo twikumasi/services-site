@@ -299,6 +299,45 @@ body {
   font-size: .83rem; color: var(--muted); margin-bottom: 10px;
 }
 .work-desc { color: var(--muted); font-size: .93rem; }
+.work-link { text-decoration: none; color: inherit; display: block; height: 100%; }
+.work-card:hover { box-shadow: 0 6px 20px rgba(13,27,42,.16); transform: translateY(-2px); }
+.work-card { transition: box-shadow .15s, transform .15s; }
+.work-more {
+  display: inline-block; margin-top: 10px;
+  color: var(--accent-dark); font-weight: 700; font-size: .88rem;
+}
+
+/* Social links */
+.social-row { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+.social-btn {
+  display: inline-block;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.22);
+  color: var(--white);
+  padding: 9px 18px; border-radius: 8px;
+  text-decoration: none; font-weight: 600; font-size: .92rem;
+}
+.social-btn:hover { background: var(--accent); color: var(--navy); border-color: var(--accent); }
+
+/* Project detail page */
+.detail-wrap { max-width: 780px; }
+.back-link {
+  display: inline-block; margin-bottom: 16px;
+  color: var(--muted); text-decoration: none; font-size: .92rem;
+}
+.back-link:hover { color: var(--navy); }
+.detail-title { font-size: 1.9rem; color: var(--navy); margin-bottom: 12px; line-height: 1.25; }
+.detail-meta { margin-bottom: 22px; }
+.detail-img {
+  width: 100%; border-radius: var(--radius); display: block;
+  margin-bottom: 22px; box-shadow: 0 3px 16px rgba(13,27,42,.14);
+}
+.detail-desc { font-size: 1.03rem; color: var(--text); margin-bottom: 28px; white-space: pre-line; }
+.detail-cta { padding-top: 8px; }
+
+/* LinkedIn share button in admin */
+.btn-linkedin { background: #0a66c2 !important; }
+.btn-linkedin:hover { background: #084e96 !important; }
 
 /* Clients */
 .client-grid {
