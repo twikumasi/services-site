@@ -102,6 +102,47 @@ INDUSTRIES = [
 
 REQUEST_STATUSES = ["New", "Contacted", "Quoted", "Won", "Closed"]
 
+# Dial codes offered on the request form. Egypt first as the default; the rest
+# cover the markets a beverage/packaging line engineer is most likely to serve.
+COUNTRY_CODES = [
+    ("+20", "🇪🇬 Egypt"),
+    ("+966", "🇸🇦 Saudi Arabia"),
+    ("+971", "🇦🇪 UAE"),
+    ("+974", "🇶🇦 Qatar"),
+    ("+965", "🇰🇼 Kuwait"),
+    ("+973", "🇧🇭 Bahrain"),
+    ("+968", "🇴🇲 Oman"),
+    ("+962", "🇯🇴 Jordan"),
+    ("+961", "🇱🇧 Lebanon"),
+    ("+964", "🇮🇶 Iraq"),
+    ("+963", "🇸🇾 Syria"),
+    ("+967", "🇾🇪 Yemen"),
+    ("+218", "🇱🇾 Libya"),
+    ("+249", "🇸🇩 Sudan"),
+    ("+213", "🇩🇿 Algeria"),
+    ("+212", "🇲🇦 Morocco"),
+    ("+216", "🇹🇳 Tunisia"),
+    ("+234", "🇳🇬 Nigeria"),
+    ("+233", "🇬🇭 Ghana"),
+    ("+254", "🇰🇪 Kenya"),
+    ("+255", "🇹🇿 Tanzania"),
+    ("+256", "🇺🇬 Uganda"),
+    ("+251", "🇪🇹 Ethiopia"),
+    ("+27", "🇿🇦 South Africa"),
+    ("+90", "🇹🇷 Turkey"),
+    ("+44", "🇬🇧 United Kingdom"),
+    ("+49", "🇩🇪 Germany"),
+    ("+33", "🇫🇷 France"),
+    ("+39", "🇮🇹 Italy"),
+    ("+34", "🇪🇸 Spain"),
+    ("+31", "🇳🇱 Netherlands"),
+    ("+1", "🇺🇸 USA / Canada"),
+    ("+91", "🇮🇳 India"),
+    ("+92", "🇵🇰 Pakistan"),
+    ("+86", "🇨🇳 China"),
+]
+VALID_DIAL_CODES = {code for code, _ in COUNTRY_CODES}
+
 # Editable from /admin/settings. Keys are fixed; values are whatever Ahmad sets.
 DEFAULT_SETTINGS = {
     "business_name": "AH Automation Services",
@@ -333,6 +374,7 @@ def index():
         industries=INDUSTRIES,
         projects=projects,
         clients=clients,
+        country_codes=COUNTRY_CODES,
         sent=request.args.get("sent") == "1",
     )
 
@@ -383,6 +425,25 @@ def service_worker():
     return response
 
 
+def combine_phone(dial_code, local_number):
+    """Join the chosen country code with the number the visitor typed.
+
+    Visitors often type the code themselves or start with a national trunk
+    prefix ('0111...'), so strip both rather than storing '+20 +20' or '+200111'.
+    """
+    local = "".join(ch for ch in local_number if ch.isdigit() or ch == "+").strip()
+    if dial_code not in VALID_DIAL_CODES:
+        dial_code = COUNTRY_CODES[0][0]
+    if local.startswith("+"):
+        # Already fully international — trust it and ignore the dropdown.
+        return local
+    digits = dial_code.lstrip("+")
+    if local.startswith(digits):
+        local = local[len(digits):]
+    local = local.lstrip("0")
+    return f"{dial_code}{local}" if local else ""
+
+
 @app.route("/request", methods=["POST"])
 def submit_request():
     db = get_db()
@@ -394,7 +455,8 @@ def submit_request():
             datetime.now().strftime("%Y-%m-%d %H:%M"),
             request.form.get("name", "").strip(),
             request.form.get("company", "").strip(),
-            request.form.get("phone", "").strip(),
+            combine_phone(request.form.get("country_code", ""),
+                          request.form.get("phone", "")),
             request.form.get("email", "").strip(),
             request.form.get("machine", "").strip(),
             request.form.get("service", "").strip(),

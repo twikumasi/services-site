@@ -87,12 +87,12 @@
         {% endif %}
       </div>
       {% endfor %}
-      <div class="brand-tile brand-tile-more"><span>+ other OEM equipment</span></div>
     </div>
     <p class="brand-note">
-      Brand names are shown to indicate the equipment we service. We are an
-      independent service provider and are not affiliated with, or endorsed by,
-      these manufacturers.
+      We service equipment from these and other manufacturers — tell us what is
+      on your line. Brand names are shown to indicate the equipment we work on;
+      we are an independent service provider and are not affiliated with, or
+      endorsed by, these manufacturers.
     </p>
 
     <h3 class="chip-heading">Control &amp; Automation Systems</h3>
@@ -219,7 +219,18 @@
           <label>Company<input type="text" name="company"></label>
         </div>
         <div class="form-row">
-          <label>Phone / WhatsApp *<input type="tel" name="phone" required></label>
+          <label>Phone / WhatsApp *
+            <span class="phone-group">
+              <select name="country_code" aria-label="Country code">
+                {% for code, label in country_codes %}
+                <option value="{{ code }}">{{ label }} ({{ code }})</option>
+                {% endfor %}
+              </select>
+              <input type="tel" name="phone" required inputmode="tel"
+                     placeholder="111 222 3334">
+            </span>
+            <span class="hint">Pick your country, then your number without the leading 0.</span>
+          </label>
           <label>Email<input type="email" name="email"></label>
         </div>
         <div class="form-row">

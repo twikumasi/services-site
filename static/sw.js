@@ -2,7 +2,7 @@
    Caches the shell so the app opens instantly and shows a useful page when
    the phone has no signal — common inside plants and basements. */
 
-const CACHE = 'ahauto-v1';
+const CACHE = 'ahauto-v2';
 const SHELL = [
   '/',
   '/static/style.css',
@@ -55,7 +55,24 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Assets: serve from cache immediately, refresh in the background.
+  // Stylesheets and scripts: network first. Serving these from cache would
+  // freeze the site's appearance — a deployed CSS change would stay invisible
+  // to anyone who had already loaded the old file.
+  if (/\.(css|js)$/i.test(url.pathname)) {
+    event.respondWith(
+      fetch(req)
+        .then((res) => {
+          const copy = res.clone();
+          caches.open(CACHE).then((c) => c.put(req, copy));
+          return res;
+        })
+        .catch(() => caches.match(req))
+    );
+    return;
+  }
+
+  // Images and fonts: cache first. Uploaded photos and icons get unique
+  // filenames, so a cached copy can never be out of date.
   event.respondWith(
     caches.match(req).then((hit) => hit || fetch(req).then((res) => {
       const copy = res.clone();

@@ -18,6 +18,11 @@ banner shows in the admin until you do.
 | **Brands** | Manage the equipment brands shown on the site; optionally upload a logo image |
 | **Contact** | Edit the business name, tagline, phone, WhatsApp, email, and availability line — changes go live immediately |
 
+Inquiry phone numbers are stored in full international form (`+20…`). The public
+form pairs a country dropdown with the number and normalises what visitors type,
+so every number in the admin is dialable as-is. Add or reorder countries in
+`COUNTRY_CODES` near the top of `app.py`.
+
 Photos upload to `static/uploads/` (JPG, PNG, GIF, WEBP — max 8 MB each).
 Anything with "show on site" unticked stays private to the admin.
 
@@ -51,6 +56,13 @@ Pieces involved:
   business name is set in the admin.
 - `/sw.js` — service worker, served from the site root so its scope covers the
   whole site. Caches the public shell; **never** caches `/admin`.
+  - Pages, CSS, and JS use **network-first**, so a deployed change shows up
+    immediately. Serving these from cache would freeze the site's appearance for
+    anyone who had already loaded the old files.
+  - Images use cache-first — icons and uploaded photos have unique filenames, so
+    a cached copy can never be stale.
+  - Bump `CACHE` in `static/sw.js` if you ever need to force every visitor onto a
+    clean cache.
 - `static/offline.html` — shown when the phone has no signal.
 - `static/icons/` — 192px and 512px icons plus maskable variants, generated
   from `logo.svg`.

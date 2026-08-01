@@ -22,7 +22,7 @@
         <td class="nowrap">{{ r['created_at'] }}</td>
         <td>{{ r['name'] }}</td>
         <td>{{ r['company'] }}</td>
-        <td class="nowrap"><a href="tel:{{ r['phone'] }}">{{ r['phone'] }}</a></td>
+        <td class="nowrap"><a href="tel:{{ tel_link(r['phone']) }}">{{ r['phone'] }}</a></td>
         <td>{% if r['email'] %}<a href="mailto:{{ r['email'] }}">{{ r['email'] }}</a>{% endif %}</td>
         <td>{{ r['machine'] }}</td>
         <td>{{ r['service'] }}</td>

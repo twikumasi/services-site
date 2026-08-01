@@ -42,7 +42,7 @@
         <td>{{ r['created_at'] }}</td>
         <td>{{ r['name'] }}</td>
         <td>{{ r['company'] }}</td>
-        <td><a href="tel:{{ r['phone'] }}">{{ r['phone'] }}</a></td>
+        <td><a href="tel:{{ tel_link(r['phone']) }}">{{ r['phone'] }}</a></td>
         <td>{{ r['machine'] }}</td>
         <td><span class="badge badge-{{ r['status']|lower }}">{{ r['status'] }}</span></td>
       </tr>
