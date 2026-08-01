@@ -1,0 +1,49 @@
+{% extends "admin/base.html" %}
+{% set active = 'brands' %}
+{% block title %}{{ 'Edit Brand' if brand else 'Add Brand' }}{% endblock %}
+
+{% block content %}
+<h2>{{ 'Edit Brand' if brand else 'Add Brand' }}</h2>
+
+<form method="POST" enctype="multipart/form-data" class="form form-wide">
+  <div class="form-row">
+    <label>Brand Name *
+      <input type="text" name="name" required placeholder="e.g. KHS"
+             value="{{ brand['name'] if brand else '' }}">
+    </label>
+    <label>Display Order
+      <input type="number" name="sort_order" value="{{ brand['sort_order'] if brand else 0 }}">
+      <span class="hint">Lower numbers appear first.</span>
+    </label>
+  </div>
+
+  <label>Logo image — optional (PNG with transparent background works best)
+    <input type="file" name="logo" accept="image/*">
+    <span class="hint">
+      Leave empty to show the brand name as a styled tile. Only upload a
+      manufacturer's logo if you have permission to use it — see the warning on
+      the brands page.
+    </span>
+  </label>
+
+  {% if brand and brand['logo'] %}
+  <div class="current-photo">
+    <img src="{{ url_for('static', filename='uploads/' ~ brand['logo']) }}" alt="Current logo">
+    <label class="check-label">
+      <input type="checkbox" name="remove_logo"> Remove this logo (go back to a text tile)
+    </label>
+  </div>
+  {% endif %}
+
+  <label class="check-label">
+    <input type="checkbox" name="show_on_site"
+           {% if not brand or brand['show_on_site'] %}checked{% endif %}>
+    Show this brand on the website
+  </label>
+
+  <div class="form-actions">
+    <button type="submit" class="btn">{{ 'Save Changes' if brand else 'Add Brand' }}</button>
+    <a href="{{ url_for('admin_brands') }}" class="btn btn-grey">Cancel</a>
+  </div>
+</form>
+{% endblock %}

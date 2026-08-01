@@ -1,0 +1,16 @@
+# The live client-request database must never be committed — otherwise a
+# `git pull` on the server could clobber real inquiries with test data.
+requests.db
+
+# Session signing key — generated per server, must never be shared.
+.secret_key
+
+# Photos uploaded through the admin panel live only on the server.
+static/uploads/*
+!static/uploads/.gitkeep
+
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env

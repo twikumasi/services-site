@@ -1,0 +1,53 @@
+{% extends "admin/base.html" %}
+{% set active = 'requests' %}
+{% block title %}Requests{% endblock %}
+
+{% block content %}
+<h2>Service Requests ({{ rows|length }})</h2>
+
+{% if rows %}
+<div class="table-wrap">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>#</th><th>Date</th><th>Name</th><th>Company</th><th>Phone</th>
+        <th>Email</th><th>Machine</th><th>Service</th><th>Message</th>
+        <th>Status</th><th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in rows %}
+      <tr>
+        <td>{{ r['id'] }}</td>
+        <td class="nowrap">{{ r['created_at'] }}</td>
+        <td>{{ r['name'] }}</td>
+        <td>{{ r['company'] }}</td>
+        <td class="nowrap"><a href="tel:{{ r['phone'] }}">{{ r['phone'] }}</a></td>
+        <td>{% if r['email'] %}<a href="mailto:{{ r['email'] }}">{{ r['email'] }}</a>{% endif %}</td>
+        <td>{{ r['machine'] }}</td>
+        <td>{{ r['service'] }}</td>
+        <td class="msg-cell">{{ r['message'] }}</td>
+        <td>
+          <form method="POST" action="{{ url_for('update_request_status', req_id=r['id']) }}">
+            <select name="status" onchange="this.form.submit()" class="mini-select">
+              {% for s in statuses %}
+              <option value="{{ s }}" {% if s == r['status'] %}selected{% endif %}>{{ s }}</option>
+              {% endfor %}
+            </select>
+          </form>
+        </td>
+        <td>
+          <form method="POST" action="{{ url_for('delete_request', req_id=r['id']) }}"
+                onsubmit="return confirm('Delete this request permanently?')">
+            <button class="btn-danger" title="Delete">✕</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p class="empty">No requests yet. Share your website link with clients.</p>
+{% endif %}
+{% endblock %}

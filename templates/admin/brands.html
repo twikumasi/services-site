@@ -1,0 +1,56 @@
+{% extends "admin/base.html" %}
+{% set active = 'brands' %}
+{% block title %}Equipment Brands{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <h2>Equipment Brands ({{ rows|length }})</h2>
+  <a href="{{ url_for('brand_form') }}" class="btn">+ Add Brand</a>
+</div>
+
+<div class="alert alert-warn">
+  ⚠️ <strong>Before uploading a manufacturer's logo, read this.</strong>
+  Company logos (Krones, Sidel, KHS, SMI…) are registered trademarks. Naming a
+  brand in text to say you service it is normally fine, but displaying its logo
+  can suggest you are an authorised partner or distributor — which these
+  companies do enforce. Unless you have written permission or are an official
+  partner, leave the logo empty: the name is shown as a styled tile instead,
+  which looks just as professional and carries no risk.
+</div>
+
+{% if rows %}
+<div class="table-wrap">
+  <table class="admin-table">
+    <thead>
+      <tr><th>Order</th><th>Logo</th><th>Name</th><th>On Site</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for b in rows %}
+      <tr>
+        <td>{{ b['sort_order'] }}</td>
+        <td>
+          {% if b['logo'] %}
+          <img class="brand-thumb" src="{{ url_for('static', filename='uploads/' ~ b['logo']) }}" alt="">
+          {% else %}
+          <span class="muted-text">text tile</span>
+          {% endif %}
+        </td>
+        <td><strong>{{ b['name'] }}</strong></td>
+        <td>{{ '✅' if b['show_on_site'] else '—' }}</td>
+        <td class="nowrap">
+          <a href="{{ url_for('brand_form', brand_id=b['id']) }}" class="btn-mini">Edit</a>
+          <form method="POST" action="{{ url_for('delete_brand', brand_id=b['id']) }}"
+                class="inline-form"
+                onsubmit="return confirm('Remove “{{ b['name'] }}” from the site?')">
+            <button class="btn-danger" title="Delete">✕</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p class="empty">No brands listed. Click <strong>+ Add Brand</strong>.</p>
+{% endif %}
+{% endblock %}

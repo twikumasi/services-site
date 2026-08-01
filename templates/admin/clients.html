@@ -1,0 +1,47 @@
+{% extends "admin/base.html" %}
+{% set active = 'clients' %}
+{% block title %}Clients{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <h2>Clients ({{ rows|length }})</h2>
+  <a href="{{ url_for('client_form') }}" class="btn">+ Add Client</a>
+</div>
+
+{% if rows %}
+<div class="table-wrap">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>Name</th><th>Industry</th><th>Location</th><th>Contact</th>
+        <th>Phone</th><th>Email</th><th>Notes</th><th>On Site</th><th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for c in rows %}
+      <tr>
+        <td><strong>{{ c['name'] }}</strong></td>
+        <td>{{ c['industry'] }}</td>
+        <td>{{ c['location'] }}</td>
+        <td>{{ c['contact_person'] }}</td>
+        <td class="nowrap">{% if c['phone'] %}<a href="tel:{{ c['phone'] }}">{{ c['phone'] }}</a>{% endif %}</td>
+        <td>{% if c['email'] %}<a href="mailto:{{ c['email'] }}">{{ c['email'] }}</a>{% endif %}</td>
+        <td class="msg-cell">{{ c['notes'] }}</td>
+        <td>{{ '✅' if c['show_on_site'] else '—' }}</td>
+        <td class="nowrap">
+          <a href="{{ url_for('client_form', client_id=c['id']) }}" class="btn-mini">Edit</a>
+          <form method="POST" action="{{ url_for('delete_client', client_id=c['id']) }}"
+                class="inline-form"
+                onsubmit="return confirm('Delete client “{{ c['name'] }}” permanently?')">
+            <button class="btn-danger" title="Delete">✕</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p class="empty">No clients yet. Click <strong>+ Add Client</strong> to add your first one.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends "admin/base.html" %}
+{% set active = 'clients' %}
+{% block title %}{{ 'Edit Client' if client else 'Add Client' }}{% endblock %}
+
+{% block content %}
+<h2>{{ 'Edit Client' if client else 'Add Client' }}</h2>
+
+<form method="POST" class="form form-wide">
+  <div class="form-row">
+    <label>Client / Company Name *
+      <input type="text" name="name" required value="{{ client['name'] if client else '' }}">
+    </label>
+    <label>Industry
+      <input type="text" name="industry" placeholder="e.g. Beverage & Bottling"
+             value="{{ client['industry'] if client else '' }}">
+    </label>
+  </div>
+
+  <div class="form-row">
+    <label>Location
+      <input type="text" name="location" placeholder="City / country"
+             value="{{ client['location'] if client else '' }}">
+    </label>
+    <label>Contact Person
+      <input type="text" name="contact_person"
+             value="{{ client['contact_person'] if client else '' }}">
+    </label>
+  </div>
+
+  <div class="form-row">
+    <label>Phone
+      <input type="tel" name="phone" value="{{ client['phone'] if client else '' }}">
+    </label>
+    <label>Email
+      <input type="email" name="email" value="{{ client['email'] if client else '' }}">
+    </label>
+  </div>
+
+  <label>Notes (private — never shown on the website)
+    <textarea name="notes" rows="3">{{ client['notes'] if client else '' }}</textarea>
+  </label>
+
+  <label class="check-label">
+    <input type="checkbox" name="show_on_site"
+           {% if not client or client['show_on_site'] %}checked{% endif %}>
+    Show this client's name in the "Clients We Work With" section of the website
+  </label>
+
+  <div class="form-actions">
+    <button type="submit" class="btn">{{ 'Save Changes' if client else 'Add Client' }}</button>
+    <a href="{{ url_for('admin_clients') }}" class="btn btn-grey">Cancel</a>
+  </div>
+</form>
+{% endblock %}

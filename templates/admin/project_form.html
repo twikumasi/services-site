@@ -1,0 +1,74 @@
+{% extends "admin/base.html" %}
+{% set active = 'projects' %}
+{% block title %}{{ 'Edit Work' if project else 'Add Work Done' }}{% endblock %}
+
+{% block content %}
+<h2>{{ 'Edit Work' if project else 'Add Work Done' }}</h2>
+
+<form method="POST" enctype="multipart/form-data" class="form form-wide">
+  <label>Title *
+    <input type="text" name="title" required
+           placeholder="e.g. Krones filler servo drive replacement"
+           value="{{ project['title'] if project else '' }}">
+  </label>
+
+  <div class="form-row">
+    <label>Client
+      <input type="text" name="client" list="client-list"
+             value="{{ project['client'] if project else '' }}">
+      <datalist id="client-list">
+        {% for name in client_names %}<option value="{{ name }}">{% endfor %}
+      </datalist>
+    </label>
+    <label>Machine / Line
+      <input type="text" name="machine" placeholder="e.g. Krones Filler VKPV"
+             value="{{ project['machine'] if project else '' }}">
+    </label>
+  </div>
+
+  <div class="form-row">
+    <label>Service Type
+      <select name="service">
+        <option value="">— none —</option>
+        {% for s in services %}
+        <option value="{{ s.title }}" {% if project and project['service'] == s.title %}selected{% endif %}>{{ s.title }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>When
+      <input type="text" name="date_done" placeholder="e.g. March 2026"
+             value="{{ project['date_done'] if project else '' }}">
+    </label>
+  </div>
+
+  <label>Description — what was the problem and what did you do?
+    <textarea name="description" rows="4"
+      placeholder="Line was stopping on drive fault F07801. Traced to a failed encoder cable…">{{ project['description'] if project else '' }}</textarea>
+  </label>
+
+  <label>Photo (JPG, PNG, GIF or WEBP — max 8 MB)
+    <input type="file" name="image" accept="image/*">
+  </label>
+
+  {% if project and project['image'] %}
+  <div class="current-photo">
+    <img src="{{ url_for('static', filename='uploads/' ~ project['image']) }}" alt="Current photo">
+    <label class="check-label">
+      <input type="checkbox" name="remove_image"> Remove this photo
+    </label>
+    <p class="hint">Uploading a new photo replaces the current one.</p>
+  </div>
+  {% endif %}
+
+  <label class="check-label">
+    <input type="checkbox" name="show_on_site"
+           {% if not project or project['show_on_site'] %}checked{% endif %}>
+    Show this job in the "Our Work" section of the website
+  </label>
+
+  <div class="form-actions">
+    <button type="submit" class="btn">{{ 'Save Changes' if project else 'Add Work' }}</button>
+    <a href="{{ url_for('admin_projects') }}" class="btn btn-grey">Cancel</a>
+  </div>
+</form>
+{% endblock %}

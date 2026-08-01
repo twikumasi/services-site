@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AH Automation Services — Industrial Electrical &amp; Automation</title>
+<meta name="description" content="Electrical & automation services for factories and production lines: troubleshooting, PLC programming, spare parts, preventive maintenance, and training. Experience with Sidel, Krones, KHS, SMI and more.">
+<link rel="icon" href="{{ url_for('static', filename='logo.svg') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="container topbar-inner">
+    <a class="brand" href="#top">
+      <img src="{{ url_for('static', filename='logo.svg') }}" alt="" class="brand-logo">
+      <span class="brand-text">AH Automation <em>Services</em></span>
+    </a>
+    <nav>
+      <a href="#services">Services</a>
+      <a href="#expertise">Expertise</a>
+      {% if projects %}<a href="#work">Our Work</a>{% endif %}
+      <a href="#why">Why Us</a>
+      <a href="#contact" class="btn btn-small">Request Service</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <p class="hero-kicker">Electrical &amp; Automation Specialists · Factories &amp; Production Lines</p>
+    <h1>Keep Your Production Lines<br>Running at Full Speed</h1>
+    <p class="hero-sub">
+      Hands-on troubleshooting, PLC programming, spare parts, and preventive maintenance
+      for industrial plants — delivered by a team of engineers who have spent years on
+      the production floor, on equipment from Sidel, Krones, KHS, SMI and beyond.
+    </p>
+    <div class="hero-actions">
+      <a href="#contact" class="btn">Request Service</a>
+      <a href="#services" class="btn btn-outline">View Services</a>
+    </div>
+  </div>
+</section>
+
+<section id="services" class="section">
+  <div class="container">
+    <h2>Services</h2>
+    <p class="section-sub">Everything your line needs, from emergency callouts to long-term care.</p>
+    <div class="cards">
+      {% for s in services %}
+      <div class="card">
+        <div class="card-icon">{{ s.icon }}</div>
+        <h3>{{ s.title }}</h3>
+        <p>{{ s.desc }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section id="expertise" class="section section-dark">
+  <div class="container">
+    <h2>Expertise</h2>
+    <p class="section-sub">
+      Our team brings deep hands-on experience with the industry's leading
+      equipment — and the control systems behind all of it.
+    </p>
+
+    <h3 class="chip-heading">Equipment We Service</h3>
+    <div class="brand-wall">
+      {% for b in brands %}
+      <div class="brand-tile">
+        {% if b['logo'] %}
+        <img src="{{ url_for('static', filename='uploads/' ~ b['logo']) }}"
+             alt="{{ b['name'] }}" loading="lazy">
+        {% else %}
+        <span class="brand-name">{{ b['name'] }}</span>
+        {% endif %}
+      </div>
+      {% endfor %}
+      <div class="brand-tile brand-tile-more"><span>+ other OEM equipment</span></div>
+    </div>
+    <p class="brand-note">
+      Brand names are shown to indicate the equipment we service. We are an
+      independent service provider and are not affiliated with, or endorsed by,
+      these manufacturers.
+    </p>
+
+    <h3 class="chip-heading">Control &amp; Automation Systems</h3>
+    <div class="chips">
+      {% for p in platforms %}<span class="chip">{{ p }}</span>{% endfor %}
+    </div>
+
+    <h3 class="chip-heading">Industries Served</h3>
+    <div class="chips">
+      {% for i in industries %}<span class="chip">{{ i }}</span>{% endfor %}
+    </div>
+  </div>
+</section>
+
+{% if projects %}
+<section id="work" class="section">
+  <div class="container">
+    <h2>Our Work</h2>
+    <p class="section-sub">Real jobs on real lines — a sample of what we've delivered.</p>
+    <div class="work-grid">
+      {% for p in projects %}
+      <article class="work-card">
+        {% if p['image'] %}
+        <img class="work-img" src="{{ url_for('static', filename='uploads/' ~ p['image']) }}"
+             alt="{{ p['title'] }}" loading="lazy">
+        {% endif %}
+        <div class="work-body">
+          <h3>{{ p['title'] }}</h3>
+          <p class="work-meta">
+            {% if p['machine'] %}<span>🛠️ {{ p['machine'] }}</span>{% endif %}
+            {% if p['client'] %}<span>🏭 {{ p['client'] }}</span>{% endif %}
+            {% if p['date_done'] %}<span>📅 {{ p['date_done'] }}</span>{% endif %}
+          </p>
+          {% if p['description'] %}<p class="work-desc">{{ p['description'] }}</p>{% endif %}
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if clients %}
+<section id="clients" class="section section-light">
+  <div class="container">
+    <h2>Clients We Work With</h2>
+    <p class="section-sub">Plants and factories that trust us with their lines.</p>
+    <div class="client-grid">
+      {% for c in clients %}
+      <div class="client-card">
+        <strong>{{ c['name'] }}</strong>
+        {% if c['industry'] or c['location'] %}
+        <span>{{ c['industry'] }}{% if c['industry'] and c['location'] %} · {% endif %}{{ c['location'] }}</span>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section id="why" class="section">
+  <div class="container">
+    <h2>Why Work With Us</h2>
+    <p class="section-sub">A team of engineers who have run these lines, not just read about them.</p>
+    <div class="cards cards-3">
+      <div class="card">
+        <div class="card-icon">🏭</div>
+        <h3>Real Plant Experience</h3>
+        <p>Not just theory — our engineers have spent years solving live breakdowns on high-speed production lines under real pressure, across multiple plants and equipment brands.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⏱️</div>
+        <h3>Downtime Is the Enemy</h3>
+        <p>Fast response and structured fault-finding to get your line back up in hours, not days.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🤝</div>
+        <h3>Honest, Practical Advice</h3>
+        <p>Clear recommendations on repairs, parts, and upgrades — only what your plant actually needs.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">👷</div>
+        <h3>A Team, Not One Person</h3>
+        <p>Electrical, automation, and mechanical skills under one roof — so we can cover a full line and respond even when one engineer is already on site elsewhere.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="section section-dark">
+  <div class="container contact-grid">
+    <div>
+      <h2>Request a Service</h2>
+      <p class="section-sub">
+        Tell us about your machine and the problem. We'll get back to you quickly
+        with next steps and availability.
+      </p>
+      <ul class="contact-list">
+        <li>📧 <a href="mailto:ahmad.hamdi@twellium.com">ahmad.hamdi@twellium.com</a></li>
+        <li>📱 <a href="tel:+000000000000">+000 000 000 000</a> (call / WhatsApp)</li>
+        <li>📍 Available for on-site work &amp; remote support</li>
+      </ul>
+    </div>
+    <div>
+      {% if sent %}
+      <div class="alert-success">
+        ✅ Your request has been received. We'll contact you as soon as possible.
+      </div>
+      {% endif %}
+      <form class="form" method="POST" action="{{ url_for('submit_request') }}">
+        <div class="form-row">
+          <label>Your Name *<input type="text" name="name" required></label>
+          <label>Company<input type="text" name="company"></label>
+        </div>
+        <div class="form-row">
+          <label>Phone / WhatsApp *<input type="tel" name="phone" required></label>
+          <label>Email<input type="email" name="email"></label>
+        </div>
+        <div class="form-row">
+          <label>Machine / Line
+            <input type="text" name="machine" placeholder="e.g. Krones filler, KHS packer, SMI wrapper">
+          </label>
+          <label>Service Needed
+            <select name="service">
+              <option>Troubleshooting &amp; Repair</option>
+              <option>PLC Programming &amp; Upgrades</option>
+              <option>Spare Parts Supply</option>
+              <option>Preventive Maintenance Contract</option>
+              <option>Training &amp; Consultancy</option>
+              <option>Other</option>
+            </select>
+          </label>
+        </div>
+        <label>Describe the problem or request
+          <textarea name="message" rows="4" placeholder="What is happening on the machine? Any alarm codes?"></textarea>
+        </label>
+        <button type="submit" class="btn btn-full">Send Request</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <p>© 2026 AH Automation Services — Industrial Electrical &amp; Automation Expertise</p>
+    <p class="footer-admin"><a href="{{ url_for('admin_login') }}">Staff login</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

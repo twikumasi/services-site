@@ -1,0 +1,47 @@
+{% extends "admin/base.html" %}
+{% set active = 'projects' %}
+{% block title %}Work Done{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <h2>Work Done ({{ rows|length }})</h2>
+  <a href="{{ url_for('project_form') }}" class="btn">+ Add Work Done</a>
+</div>
+
+{% if rows %}
+<div class="proj-admin-grid">
+  {% for p in rows %}
+  <div class="proj-admin-card">
+    {% if p['image'] %}
+    <img src="{{ url_for('static', filename='uploads/' ~ p['image']) }}" alt="{{ p['title'] }}">
+    {% else %}
+    <div class="proj-noimg">No photo</div>
+    {% endif %}
+    <div class="proj-admin-body">
+      <h3>{{ p['title'] }}</h3>
+      <p class="proj-meta">
+        {% if p['client'] %}{{ p['client'] }}{% endif %}
+        {% if p['machine'] %} · {{ p['machine'] }}{% endif %}
+        {% if p['date_done'] %} · {{ p['date_done'] }}{% endif %}
+      </p>
+      {% if p['description'] %}<p class="proj-desc">{{ p['description'] }}</p>{% endif %}
+      <p class="proj-vis">{{ '✅ Visible on website' if p['show_on_site'] else '🚫 Hidden from website' }}</p>
+      <div class="proj-actions">
+        <a href="{{ url_for('project_form', project_id=p['id']) }}" class="btn-mini">Edit</a>
+        <form method="POST" action="{{ url_for('delete_project', project_id=p['id']) }}"
+              class="inline-form"
+              onsubmit="return confirm('Delete “{{ p['title'] }}” and its photo permanently?')">
+          <button class="btn-danger" title="Delete">✕</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<p class="empty">
+  No work added yet. Click <strong>+ Add Work Done</strong> to show off a job —
+  a photo of the machine you fixed goes a long way with new clients.
+</p>
+{% endif %}
+{% endblock %}

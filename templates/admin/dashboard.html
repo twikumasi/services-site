@@ -1,0 +1,56 @@
+{% extends "admin/base.html" %}
+{% set active = 'dashboard' %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<h2>Dashboard</h2>
+
+<div class="stat-row">
+  <a class="stat" href="{{ url_for('admin_requests') }}">
+    <span class="stat-num">{{ stats.new_requests }}</span>
+    <span class="stat-label">New Requests</span>
+  </a>
+  <a class="stat" href="{{ url_for('admin_requests') }}">
+    <span class="stat-num">{{ stats.requests }}</span>
+    <span class="stat-label">Total Requests</span>
+  </a>
+  <a class="stat" href="{{ url_for('admin_clients') }}">
+    <span class="stat-num">{{ stats.clients }}</span>
+    <span class="stat-label">Clients</span>
+  </a>
+  <a class="stat" href="{{ url_for('admin_projects') }}">
+    <span class="stat-num">{{ stats.projects }}</span>
+    <span class="stat-label">Projects</span>
+  </a>
+</div>
+
+<div class="quick-actions">
+  <a href="{{ url_for('client_form') }}" class="btn">+ Add Client</a>
+  <a href="{{ url_for('project_form') }}" class="btn">+ Add Work Done</a>
+</div>
+
+<h3 class="admin-h3">Latest Requests</h3>
+{% if recent %}
+<div class="table-wrap">
+  <table class="admin-table">
+    <thead>
+      <tr><th>Date</th><th>Name</th><th>Company</th><th>Phone</th><th>Machine</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+      {% for r in recent %}
+      <tr>
+        <td>{{ r['created_at'] }}</td>
+        <td>{{ r['name'] }}</td>
+        <td>{{ r['company'] }}</td>
+        <td><a href="tel:{{ r['phone'] }}">{{ r['phone'] }}</a></td>
+        <td>{{ r['machine'] }}</td>
+        <td><span class="badge badge-{{ r['status']|lower }}">{{ r['status'] }}</span></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p class="empty">No requests yet. Share your website link with clients.</p>
+{% endif %}
+{% endblock %}

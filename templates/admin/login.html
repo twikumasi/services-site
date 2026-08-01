@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login — AH Automation Services</title>
+<link rel="icon" href="{{ url_for('static', filename='logo.svg') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="login-body">
+
+<div class="login-card">
+  <img src="{{ url_for('static', filename='logo.svg') }}" alt="" class="login-logo">
+  <h1>Admin Area</h1>
+  <p class="login-sub">Sign in to manage requests, clients, and your work.</p>
+
+  {% if error %}<div class="alert alert-error">{{ error }}</div>{% endif %}
+
+  <form method="POST" class="form">
+    <label>Password
+      <input type="password" name="password" autofocus required>
+    </label>
+    <button type="submit" class="btn btn-full">Log In</button>
+  </form>
+
+  <a class="login-back" href="{{ url_for('index') }}">← Back to website</a>
+</div>
+
+</body>
+</html>
