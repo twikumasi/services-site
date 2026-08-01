@@ -21,26 +21,48 @@ update a one-line command instead of re-uploading files by hand.
 
 ---
 
-## Part 1 — Put the code on GitHub (optional but recommended)
+## Part 1 — Put the code on GitHub
+
+The local repository is already created and the first commit is already made.
+You only need to create the GitHub side and push.
 
 1. Create a free account at https://github.com
 2. Click **+** (top right) → **New repository**.
-   - Name: `services-site`
-   - Choose **Private** if you don't want the code public.
-   - Do **not** tick "Add a README".
+   - **Repository name:** `services-site`
+   - **Public** (see the note below — public is the easier and safe choice here)
+   - **Do NOT tick** "Add a README file", "Add .gitignore", or "Choose a license".
+     The repo must be completely empty or the push below will be rejected.
    - Click **Create repository**.
-3. On your PC, open a terminal in `D:\12-REPORTS\services-site` and run the
-   commands GitHub shows you on the next screen. They look like this
-   (replace `YOURUSER` with your GitHub username):
+3. On your PC, open a terminal in `D:\12-REPORTS\services-site` and run these two
+   commands, replacing `YOURUSER` with your GitHub username:
 
    ```
-   git init
-   git add .
-   git commit -m "Initial website"
-   git branch -M main
    git remote add origin https://github.com/YOURUSER/services-site.git
    git push -u origin main
    ```
+
+   A browser window will open asking you to sign in to GitHub. Sign in and
+   approve — Git remembers it after that, so you only do this once.
+
+### Why public rather than private?
+
+A **private** repo has to be authenticated again from PythonAnywhere, which
+means generating a personal access token and pasting it into a server console —
+fiddly, and easy to get wrong. A **public** repo clones on the server with no
+login at all.
+
+Public is safe here because **the repository contains no secrets**:
+
+- Your admin password is not in the code — it is set on the server, in the WSGI
+  file, which is never part of the repo.
+- `requests.db` (clients, inquiries, projects) is excluded by `.gitignore`.
+- `static/uploads/` (your job photos) is excluded.
+- `.secret_key` (the session signing key) is excluded.
+
+What is public is the website's own HTML, CSS, and Python — the same things any
+visitor's browser already downloads. If you would still rather keep it private,
+that is fine; just search PythonAnywhere's help for "clone a private GitHub
+repo" and follow their token instructions.
 
 ---
 
@@ -49,7 +71,7 @@ update a one-line command instead of re-uploading files by hand.
 ### 1. Get the code onto the server
 Open a **Bash console** (Consoles tab → **Bash**) and run **one** of these:
 
-**If you used GitHub:**
+**If you used GitHub** (replace `YOURUSER` with your GitHub username):
 ```
 git clone https://github.com/YOURUSER/services-site.git
 ```
