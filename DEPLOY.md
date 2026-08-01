@@ -3,6 +3,8 @@
 Written for the PythonAnywhere account **`ahautomation`**.
 Your live address will be **https://ahautomation.pythonanywhere.com**
 
+Code repository: **https://github.com/twikumasi/services-site** (already pushed)
+
 ## Short answer: use BOTH, they do different jobs
 
 | | What it does | Can it run this site? |
@@ -21,30 +23,20 @@ update a one-line command instead of re-uploading files by hand.
 
 ---
 
-## Part 1 — Put the code on GitHub
+## Part 1 — GitHub ✅ DONE
 
-The local repository is already created and the first commit is already made.
-You only need to create the GitHub side and push.
+The code is already on GitHub at **https://github.com/twikumasi/services-site**
+(public). Nothing more to do here.
 
-1. Create a free account at https://github.com
-2. Click **+** (top right) → **New repository**.
-   - **Repository name:** `services-site`
-   - **Public** (see the note below — public is the easier and safe choice here)
-   - **Do NOT tick** "Add a README file", "Add .gitignore", or "Choose a license".
-     The repo must be completely empty or the push below will be rejected.
-   - Click **Create repository**.
-3. On your PC, open a terminal in `D:\12-REPORTS\services-site` and run these two
-   commands, replacing `YOURUSER` with your GitHub username:
+To send future changes up, from `D:\12-REPORTS\services-site`:
 
-   ```
-   git remote add origin https://github.com/YOURUSER/services-site.git
-   git push -u origin main
-   ```
+```
+git add .
+git commit -m "describe what you changed"
+git push
+```
 
-   A browser window will open asking you to sign in to GitHub. Sign in and
-   approve — Git remembers it after that, so you only do this once.
-
-### Why public rather than private?
+### Why the repo is public rather than private
 
 A **private** repo has to be authenticated again from PythonAnywhere, which
 means generating a personal access token and pasting it into a server console —
@@ -69,17 +61,15 @@ repo" and follow their token instructions.
 ## Part 2 — Host it on PythonAnywhere
 
 ### 1. Get the code onto the server
-Open a **Bash console** (Consoles tab → **Bash**) and run **one** of these:
+Open a **Bash console** (Consoles tab → **Bash**) and run:
 
-**If you used GitHub** (replace `YOURUSER` with your GitHub username):
 ```
-git clone https://github.com/YOURUSER/services-site.git
+git clone https://github.com/twikumasi/services-site.git
 ```
 
-**If you skipped GitHub:** go to the **Files** tab, upload a zip of the folder,
-then in a Bash console run `unzip services-site.zip`.
+No password is needed — the repository is public.
 
-Either way you should end up with the folder `/home/ahautomation/services-site`.
+You should now have the folder `/home/ahautomation/services-site`.
 Check it with:
 ```
 ls /home/ahautomation/services-site
