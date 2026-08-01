@@ -3,10 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AH Automation Services — Industrial Electrical &amp; Automation</title>
+<title>{{ settings.business_name }} — {{ settings.tagline }}</title>
 <meta name="description" content="Electrical & automation services for factories and production lines: troubleshooting, PLC programming, spare parts, preventive maintenance, and training. Experience with Sidel, Krones, KHS, SMI and more.">
 <link rel="icon" href="{{ url_for('static', filename='logo.svg') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+<!-- Installable app (Android "Add to Home screen") -->
+<link rel="manifest" href="{{ url_for('manifest') }}">
+<meta name="theme-color" content="#0d1b2a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="{{ settings.business_name }}">
+<link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/apple-touch-icon.png') }}">
 </head>
 <body>
 
@@ -14,7 +23,7 @@
   <div class="container topbar-inner">
     <a class="brand" href="#top">
       <img src="{{ url_for('static', filename='logo.svg') }}" alt="" class="brand-logo">
-      <span class="brand-text">AH Automation <em>Services</em></span>
+      <span class="brand-text">{{ settings.business_name }}</span>
     </a>
     <nav>
       <a href="#services">Services</a>
@@ -183,9 +192,19 @@
         with next steps and availability.
       </p>
       <ul class="contact-list">
-        <li>📧 <a href="mailto:ahmad.hamdi@twellium.com">ahmad.hamdi@twellium.com</a></li>
-        <li>📱 <a href="tel:+000000000000">+000 000 000 000</a> (call / WhatsApp)</li>
-        <li>📍 Available for on-site work &amp; remote support</li>
+        {% if settings.email %}
+        <li>📧 <a href="mailto:{{ settings.email }}">{{ settings.email }}</a></li>
+        {% endif %}
+        {% if settings.phone %}
+        <li>📞 <a href="tel:{{ tel_link(settings.phone) }}">{{ settings.phone }}</a></li>
+        {% endif %}
+        {% if settings.whatsapp %}
+        <li>💬 <a href="https://wa.me/{{ tel_link(settings.whatsapp)|replace('+','') }}"
+                 target="_blank" rel="noopener">WhatsApp {{ settings.whatsapp }}</a></li>
+        {% endif %}
+        {% if settings.availability %}
+        <li>📍 {{ settings.availability }}</li>
+        {% endif %}
       </ul>
     </div>
     <div>
@@ -229,10 +248,18 @@
 
 <footer class="footer">
   <div class="container">
-    <p>© 2026 AH Automation Services — Industrial Electrical &amp; Automation Expertise</p>
+    <p>© 2026 {{ settings.business_name }} — {{ settings.tagline }}</p>
     <p class="footer-admin"><a href="{{ url_for('admin_login') }}">Staff login</a></p>
   </div>
 </footer>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('/sw.js', { scope: '/' });
+    });
+  }
+</script>
 
 </body>
 </html>

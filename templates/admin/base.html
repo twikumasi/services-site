@@ -6,6 +6,11 @@
 <title>{% block title %}Admin{% endblock %} — AH Automation Services</title>
 <link rel="icon" href="{{ url_for('static', filename='logo.svg') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<link rel="manifest" href="{{ url_for('manifest') }}">
+<meta name="theme-color" content="#0d1b2a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/apple-touch-icon.png') }}">
 </head>
 <body class="admin-body">
 
@@ -21,6 +26,7 @@
       <a href="{{ url_for('admin_clients') }}" {% if active == 'clients' %}class="active"{% endif %}>Clients</a>
       <a href="{{ url_for('admin_projects') }}" {% if active == 'projects' %}class="active"{% endif %}>Work Done</a>
       <a href="{{ url_for('admin_brands') }}" {% if active == 'brands' %}class="active"{% endif %}>Brands</a>
+      <a href="{{ url_for('admin_settings') }}" {% if active == 'settings' %}class="active"{% endif %}>Contact</a>
       <a href="{{ url_for('index') }}" target="_blank">View Site ↗</a>
       <a href="{{ url_for('admin_logout') }}" class="logout">Log out</a>
     </nav>

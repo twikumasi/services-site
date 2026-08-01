@@ -6,8 +6,8 @@ import uuid
 from datetime import datetime
 from functools import wraps
 
-from flask import (Flask, flash, g, redirect, render_template, request,
-                   session, url_for)
+from flask import (Flask, flash, g, jsonify, redirect, render_template,
+                   request, send_from_directory, session, url_for)
 from werkzeug.utils import secure_filename
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -102,6 +102,16 @@ INDUSTRIES = [
 
 REQUEST_STATUSES = ["New", "Contacted", "Quoted", "Won", "Closed"]
 
+# Editable from /admin/settings. Keys are fixed; values are whatever Ahmad sets.
+DEFAULT_SETTINGS = {
+    "business_name": "AH Automation Services",
+    "tagline": "Industrial Electrical & Automation",
+    "phone": "+000 000 000 000",
+    "whatsapp": "",
+    "email": "ahmad.hamdi@twellium.com",
+    "availability": "Available for on-site work & remote support",
+}
+
 
 # --------------------------------------------------------------------------
 # Database
@@ -158,6 +168,16 @@ def init_db():
                    image TEXT,
                    show_on_site INTEGER NOT NULL DEFAULT 1
                )"""
+        )
+        db.execute(
+            """CREATE TABLE IF NOT EXISTS settings (
+                   key TEXT PRIMARY KEY,
+                   value TEXT NOT NULL
+               )"""
+        )
+        db.executemany(
+            "INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)",
+            list(DEFAULT_SETTINGS.items()),
         )
         db.execute(
             """CREATE TABLE IF NOT EXISTS brands (
@@ -225,9 +245,38 @@ def admin_logout():
     return redirect(url_for("admin_login"))
 
 
+def get_raw_settings():
+    """Exactly what is stored, with no fallbacks — what the edit form must show."""
+    values = dict(DEFAULT_SETTINGS)
+    for row in get_db().execute("SELECT key, value FROM settings"):
+        if row["key"] in DEFAULT_SETTINGS:
+            values[row["key"]] = row["value"]
+    return values
+
+
+def get_settings():
+    """Display values for the public site, with sensible fallbacks applied."""
+    values = get_raw_settings()
+    # An empty WhatsApp field means "same number as the phone". This is resolved
+    # at display time, never saved, so changing the phone keeps them in sync.
+    if not values["whatsapp"].strip():
+        values["whatsapp"] = values["phone"]
+    return values
+
+
+def tel_link(number):
+    """Strip spaces/dashes so tel: and wa.me links work."""
+    cleaned = "".join(ch for ch in number if ch.isdigit() or ch == "+")
+    return cleaned
+
+
 @app.context_processor
 def inject_globals():
-    return {"using_default_password": ADMIN_PASSWORD == DEFAULT_PASSWORD}
+    return {
+        "using_default_password": ADMIN_PASSWORD == DEFAULT_PASSWORD,
+        "settings": get_settings(),
+        "tel_link": tel_link,
+    }
 
 
 # --------------------------------------------------------------------------
@@ -286,6 +335,52 @@ def index():
         clients=clients,
         sent=request.args.get("sent") == "1",
     )
+
+
+@app.route("/manifest.webmanifest")
+def manifest():
+    """Installable-app metadata. Served from Flask so the app name follows
+    whatever business name is set in the admin."""
+    s = get_settings()
+    data = {
+        "name": s["business_name"],
+        "short_name": s["business_name"].split()[0] if s["business_name"] else "Services",
+        "description": s["tagline"],
+        "start_url": "/",
+        "scope": "/",
+        "display": "standalone",
+        "orientation": "portrait",
+        "background_color": "#0d1b2a",
+        "theme_color": "#0d1b2a",
+        "icons": [
+            {"src": "/static/icons/icon-192.png", "sizes": "192x192",
+             "type": "image/png", "purpose": "any"},
+            {"src": "/static/icons/icon-512.png", "sizes": "512x512",
+             "type": "image/png", "purpose": "any"},
+            {"src": "/static/icons/icon-maskable-192.png", "sizes": "192x192",
+             "type": "image/png", "purpose": "maskable"},
+            {"src": "/static/icons/icon-maskable-512.png", "sizes": "512x512",
+             "type": "image/png", "purpose": "maskable"},
+        ],
+        "shortcuts": [
+            {"name": "Admin Panel", "url": "/admin"},
+            {"name": "Request Service", "url": "/#contact"},
+        ],
+    }
+    response = jsonify(data)
+    response.headers["Content-Type"] = "application/manifest+json"
+    return response
+
+
+@app.route("/sw.js")
+def service_worker():
+    """Served from the site root so the worker's scope covers every page —
+    a worker under /static/ could only control /static/."""
+    response = send_from_directory(os.path.join(BASE_DIR, "static"), "sw.js")
+    response.headers["Content-Type"] = "application/javascript"
+    response.headers["Service-Worker-Allowed"] = "/"
+    response.headers["Cache-Control"] = "no-cache"
+    return response
 
 
 @app.route("/request", methods=["POST"])
@@ -546,6 +641,29 @@ def delete_project(project_id):
     db.commit()
     flash("Project deleted.", "success")
     return redirect(url_for("admin_projects"))
+
+
+# --------------------------------------------------------------------------
+# Admin — site settings (contact details)
+# --------------------------------------------------------------------------
+
+@app.route("/admin/settings", methods=["GET", "POST"])
+@login_required
+def admin_settings():
+    db = get_db()
+    if request.method == "POST":
+        for key in DEFAULT_SETTINGS:
+            value = request.form.get(key, "").strip()
+            db.execute(
+                "INSERT INTO settings (key, value) VALUES (?, ?) "
+                "ON CONFLICT(key) DO UPDATE SET value = excluded.value",
+                (key, value),
+            )
+        db.commit()
+        flash("Contact details updated — they are live on the website now.", "success")
+        return redirect(url_for("admin_settings"))
+
+    return render_template("admin/settings.html", values=get_raw_settings())
 
 
 # --------------------------------------------------------------------------

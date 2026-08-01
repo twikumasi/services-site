@@ -1,0 +1,49 @@
+{% extends "admin/base.html" %}
+{% set active = 'settings' %}
+{% block title %}Contact Details{% endblock %}
+
+{% block content %}
+<h2>Contact Details</h2>
+<p class="section-sub">
+  These appear on the website and change it instantly — no code editing needed.
+</p>
+
+<form method="POST" class="form form-wide">
+  <div class="form-row">
+    <label>Business Name
+      <input type="text" name="business_name" value="{{ values.business_name }}">
+      <span class="hint">Shown in the header, browser tab, and footer.</span>
+    </label>
+    <label>Tagline
+      <input type="text" name="tagline" value="{{ values.tagline }}">
+    </label>
+  </div>
+
+  <div class="form-row">
+    <label>Phone Number
+      <input type="tel" name="phone" value="{{ values.phone }}"
+             placeholder="+20 111 222 3334">
+      <span class="hint">Clients tap this to call you.</span>
+    </label>
+    <label>WhatsApp Number
+      <input type="tel" name="whatsapp" value="{{ values.whatsapp }}"
+             placeholder="leave blank to use the phone number">
+      <span class="hint">Only fill this if WhatsApp is on a different number.</span>
+    </label>
+  </div>
+
+  <label>Email Address
+    <input type="email" name="email" value="{{ values.email }}">
+  </label>
+
+  <label>Availability Line
+    <input type="text" name="availability" value="{{ values.availability }}">
+    <span class="hint">e.g. "Available for on-site work &amp; remote support"</span>
+  </label>
+
+  <div class="form-actions">
+    <button type="submit" class="btn">Save Changes</button>
+    <a href="{{ url_for('index') }}" target="_blank" class="btn btn-grey">View Site ↗</a>
+  </div>
+</form>
+{% endblock %}
