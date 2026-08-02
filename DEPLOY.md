@@ -115,6 +115,16 @@ uses the default `changeme123`, and anyone who guesses it can read your client
 list and delete your work. The admin pages show a warning banner until you
 change it.
 
+**How the admin account works:** the first time the site runs it creates a user
+called `admin` using this password. You then sign in with the username `admin`
+and that password. If you started the site once before setting `ADMIN_PASSWORD`,
+setting it now and reloading will upgrade the account — but once a real password
+is in place, this line is no longer what controls it; use **Team** in the admin
+panel to change passwords after that.
+
+Keep this file in mind as your password reminder: it is written here in plain
+text, so if you ever forget it, look here.
+
 (There's a ready-made copy in `pythonanywhere_wsgi.py` in the project folder.)
 
 ### 6. Tell it where the CSS and photos live
@@ -139,9 +149,9 @@ Your admin panel is at:
 
 ## First things to do once you're live
 
-1. **Log into `/admin`** and confirm the yellow "default password" warning is
-   gone. If it's still there, the `ADMIN_PASSWORD` line didn't take — check the
-   WSGI file and hit Reload again.
+1. **Log into `/admin`** with username `admin` and your password, and confirm the
+   yellow "default password" warning is gone. If it's still there, the
+   `ADMIN_PASSWORD` line didn't take — check the WSGI file and hit Reload again.
 2. **Add your real phone number.** Edit `templates/index.html` and replace
    `+000 000 000 000`.
 3. **Add a few jobs under "Work Done"** with photos. This is what convinces a

@@ -135,8 +135,13 @@
     <p class="section-sub">{{ t('clients_sub') }}</p>
     <div class="client-grid">
       {% for c in clients %}
-      <div class="client-card">
+      <div class="client-card{% if c['logo'] %} client-card-logo{% endif %}">
+        {% if c['logo'] %}
+        <img src="{{ url_for('static', filename='uploads/' ~ c['logo']) }}"
+             alt="{{ c['name'] }}" loading="lazy">
+        {% else %}
         <strong>{{ c['name'] }}</strong>
+        {% endif %}
         {% if c['industry'] or c['location'] %}
         <span>{{ c['industry'] }}{% if c['industry'] and c['location'] %} · {% endif %}{{ c['location'] }}</span>
         {% endif %}

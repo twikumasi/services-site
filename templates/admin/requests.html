@@ -3,7 +3,15 @@
 {% block title %}Requests{% endblock %}
 
 {% block content %}
-<h2>Service Requests ({{ rows|length }})</h2>
+<div class="page-head">
+  <h2>Service Requests ({{ rows|length }})</h2>
+  <div class="quick-actions">
+    <a href="{{ url_for('admin_requests') }}"
+       class="btn {{ 'btn-grey' if mine }}">All</a>
+    <a href="{{ url_for('admin_requests', mine=1) }}"
+       class="btn {{ '' if mine else 'btn-grey' }}">Assigned to me</a>
+  </div>
+</div>
 
 {% if rows %}
 <div class="table-wrap">
@@ -12,7 +20,7 @@
       <tr>
         <th>#</th><th>Date</th><th>Name</th><th>Company</th><th>Phone</th>
         <th>Email</th><th>Machine</th><th>Service</th><th>Message</th>
-        <th>Status</th><th></th>
+        <th>Assigned To</th><th>Status</th><th></th>
       </tr>
     </thead>
     <tbody>
@@ -28,6 +36,19 @@
         <td>{{ r['service'] }}</td>
         <td class="msg-cell">{{ r['message'] }}</td>
         <td>
+          <form method="POST" action="{{ url_for('assign_request', req_id=r['id']) }}">
+            <select name="assigned_to" onchange="this.form.submit()" class="mini-select">
+              <option value="">— nobody —</option>
+              {% for m in team %}
+              <option value="{{ m['id'] }}"
+                {% if r['assigned_to'] == m['id'] %}selected{% endif %}>
+                {{ m['full_name'] or m['username'] }}
+              </option>
+              {% endfor %}
+            </select>
+          </form>
+        </td>
+        <td>
           <form method="POST" action="{{ url_for('update_request_status', req_id=r['id']) }}">
             <select name="status" onchange="this.form.submit()" class="mini-select">
               {% for s in statuses %}
@@ -37,10 +58,12 @@
           </form>
         </td>
         <td>
+          {% if is_admin %}
           <form method="POST" action="{{ url_for('delete_request', req_id=r['id']) }}"
                 onsubmit="return confirm('Delete this request permanently?')">
             <button class="btn-danger" title="Delete">✕</button>
           </form>
+          {% endif %}
         </td>
       </tr>
       {% endfor %}

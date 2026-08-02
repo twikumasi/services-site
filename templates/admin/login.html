@@ -17,8 +17,11 @@
   {% if error %}<div class="alert alert-error">{{ error }}</div>{% endif %}
 
   <form method="POST" class="form">
+    <label>Username
+      <input type="text" name="username" autofocus required autocomplete="username">
+    </label>
     <label>Password
-      <input type="password" name="password" autofocus required>
+      <input type="password" name="password" required autocomplete="current-password">
     </label>
     <button type="submit" class="btn btn-full">Log In</button>
   </form>

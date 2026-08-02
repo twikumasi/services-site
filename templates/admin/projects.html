@@ -51,11 +51,13 @@
            target="_blank">View</a>
         {% endif %}
         <a href="{{ url_for('project_form', project_id=p['id']) }}" class="btn-mini">Edit</a>
+        {% if is_admin %}
         <form method="POST" action="{{ url_for('delete_project', project_id=p['id']) }}"
               class="inline-form"
               onsubmit="return confirm('Delete “{{ p['title'] }}” and its photo permanently?')">
           <button class="btn-danger" title="Delete">✕</button>
         </form>
+        {% endif %}
       </div>
     </div>
   </div>

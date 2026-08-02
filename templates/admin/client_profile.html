@@ -1,0 +1,124 @@
+{% extends "admin/base.html" %}
+{% set active = 'clients' %}
+{% block title %}{{ client['name'] }}{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <h2>
+    {% if client['logo'] %}
+    <img class="client-logo-sm"
+         src="{{ url_for('static', filename='uploads/' ~ client['logo']) }}" alt="">
+    {% endif %}
+    {{ client['name'] }}
+  </h2>
+  <div class="quick-actions">
+    <a href="{{ url_for('client_form', client_id=client['id']) }}" class="btn btn-grey">Edit Client</a>
+    <a href="{{ url_for('admin_clients') }}" class="btn btn-grey">All Clients</a>
+  </div>
+</div>
+
+<div class="profile-grid">
+  <div class="card">
+    <h3>Details</h3>
+    <table class="kv">
+      <tr><th>Industry</th><td>{{ client['industry'] or '—' }}</td></tr>
+      <tr><th>Location</th><td>{{ client['location'] or '—' }}</td></tr>
+      <tr><th>Contact</th><td>{{ client['contact_person'] or '—' }}</td></tr>
+      <tr><th>Phone</th>
+        <td>{% if client['phone'] %}<a href="tel:{{ tel_link(client['phone']) }}">{{ client['phone'] }}</a>{% else %}—{% endif %}</td></tr>
+      <tr><th>Email</th>
+        <td>{% if client['email'] %}<a href="mailto:{{ client['email'] }}">{{ client['email'] }}</a>{% else %}—{% endif %}</td></tr>
+      <tr><th>On website</th><td>{{ '✅ Yes' if client['show_on_site'] else '— No' }}</td></tr>
+    </table>
+    {% if client['notes'] %}
+    <h3 class="admin-h3">Private Notes</h3>
+    <p class="proj-desc">{{ client['notes'] }}</p>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <h3>Issue a Contract</h3>
+    {% if templates %}
+    <form method="POST" action="{{ url_for('issue_contract', client_id=client['id']) }}"
+          class="form" style="box-shadow:none;padding:0">
+      <label>Choose a template
+        <select name="template_id" required>
+          <option value="">— select —</option>
+          {% for tpl in templates %}
+          <option value="{{ tpl['id'] }}">
+            {{ tpl['title'] }}{% if tpl['service'] %} · {{ tpl['service'] }}{% endif %}
+          </option>
+          {% endfor %}
+        </select>
+      </label>
+      <button type="submit" class="btn btn-full">Create Contract</button>
+      <p class="hint">
+        The wording is copied now, with this client's details filled in. Editing
+        the template later will not change contracts already issued.
+      </p>
+    </form>
+    {% else %}
+    <p class="empty">
+      No contract templates yet.
+      {% if is_admin %}
+      <a href="{{ url_for('contract_template_form') }}">Create one</a>.
+      {% else %}Ask an administrator to add them.{% endif %}
+    </p>
+    {% endif %}
+  </div>
+</div>
+
+<h3 class="admin-h3">Contracts ({{ contracts|length }})</h3>
+{% if contracts %}
+<div class="table-wrap">
+  <table class="admin-table">
+    <thead>
+      <tr><th>Ref</th><th>Contract</th><th>Service</th><th>Status</th><th>Issued</th><th>By</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for c in contracts %}
+      <tr>
+        <td class="nowrap"><code>{{ c['reference'] }}</code></td>
+        <td>{{ c['title'] }}</td>
+        <td>{{ c['service'] or '—' }}</td>
+        <td>
+          <form method="POST" class="inline-form"
+                action="{{ url_for('update_contract_status', contract_id=c['id']) }}">
+            <select name="status" onchange="this.form.submit()" class="mini-select">
+              {% for s in statuses %}
+              <option value="{{ s }}" {% if s == c['status'] %}selected{% endif %}>{{ s }}</option>
+              {% endfor %}
+            </select>
+          </form>
+        </td>
+        <td class="nowrap">{{ c['created_at'] }}</td>
+        <td>{{ c['created_by'] or '—' }}</td>
+        <td class="nowrap">
+          <a href="{{ url_for('view_contract', contract_id=c['id']) }}" class="btn-mini">Open</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p class="empty">No contracts for this client yet.</p>
+{% endif %}
+
+<h3 class="admin-h3">Work Done for This Client ({{ projects|length }})</h3>
+{% if projects %}
+<ul class="plain-list">
+  {% for p in projects %}
+  <li>
+    <a href="{{ url_for('project_form', project_id=p['id']) }}">{{ p['title'] }}</a>
+    <span class="hint">{{ p['machine'] }}{% if p['date_done'] %} · {{ p['date_done'] }}{% endif %}</span>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p class="empty">
+  No jobs recorded against this client yet. When adding work, type
+  “{{ client['name'] }}” in the Client field and it will appear here.
+</p>
+{% endif %}
+{% endblock %}

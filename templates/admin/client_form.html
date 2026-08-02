@@ -5,7 +5,7 @@
 {% block content %}
 <h2>{{ 'Edit Client' if client else 'Add Client' }}</h2>
 
-<form method="POST" class="form form-wide">
+<form method="POST" enctype="multipart/form-data" class="form form-wide">
   <div class="form-row">
     <label>Client / Company Name *
       <input type="text" name="name" required value="{{ client['name'] if client else '' }}">
@@ -39,6 +39,23 @@
   <label>Notes (private — never shown on the website)
     <textarea name="notes" rows="3">{{ client['notes'] if client else '' }}</textarea>
   </label>
+
+  <label>Company Logo — optional (PNG with a transparent background looks best)
+    <input type="file" name="logo" accept="image/*">
+    <span class="hint">
+      Shown instead of the client's name in the website's clients section.
+      Only upload a logo you have permission to display.
+    </span>
+  </label>
+
+  {% if client and client['logo'] %}
+  <div class="current-photo">
+    <img src="{{ url_for('static', filename='uploads/' ~ client['logo']) }}" alt="Current logo">
+    <label class="check-label">
+      <input type="checkbox" name="remove_logo"> Remove this logo (show the name instead)
+    </label>
+  </div>
+  {% endif %}
 
   <label class="check-label">
     <input type="checkbox" name="show_on_site"

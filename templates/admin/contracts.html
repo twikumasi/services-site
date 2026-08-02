@@ -1,0 +1,80 @@
+{% extends "admin/base.html" %}
+{% set active = 'contracts' %}
+{% block title %}Contracts{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <h2>Contract Templates ({{ templates|length }})</h2>
+  {% if is_admin %}
+  <a href="{{ url_for('contract_template_form') }}" class="btn">+ New Template</a>
+  {% endif %}
+</div>
+
+<p class="section-sub">
+  Write your terms once per service. When a client needs that service, open their
+  profile and issue a contract from the template — the wording is copied at that
+  moment, so later edits to a template never change a contract already issued.
+</p>
+
+{% if templates %}
+<div class="table-wrap">
+  <table class="admin-table">
+    <thead><tr><th>Template</th><th>Service</th><th>Created</th><th></th></tr></thead>
+    <tbody>
+      {% for tpl in templates %}
+      <tr>
+        <td><strong>{{ tpl['title'] }}</strong></td>
+        <td>{{ tpl['service'] or '—' }}</td>
+        <td class="nowrap">{{ tpl['created_at'] }}</td>
+        <td class="nowrap">
+          {% if is_admin %}
+          <a href="{{ url_for('contract_template_form', template_id=tpl['id']) }}"
+             class="btn-mini">Edit</a>
+          <form method="POST" class="inline-form"
+                action="{{ url_for('delete_contract_template', template_id=tpl['id']) }}"
+                onsubmit="return confirm('Delete the template “{{ tpl['title'] }}”? Contracts already issued keep their wording.')">
+            <button class="btn-danger" title="Delete">✕</button>
+          </form>
+          {% else %}<span class="muted-text">admin only</span>{% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p class="empty">
+  No templates yet.
+  {% if is_admin %}Create one per service — troubleshooting, preventive
+  maintenance, spare parts supply, and so on.{% else %}
+  Ask an administrator to add them.{% endif %}
+</p>
+{% endif %}
+
+<h3 class="admin-h3">Issued Contracts ({{ issued|length }})</h3>
+{% if issued %}
+<div class="table-wrap">
+  <table class="admin-table">
+    <thead>
+      <tr><th>Ref</th><th>Client</th><th>Contract</th><th>Status</th><th>Issued</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for c in issued %}
+      <tr>
+        <td class="nowrap"><code>{{ c['reference'] }}</code></td>
+        <td>{{ c['client_name'] }}</td>
+        <td>{{ c['title'] }}</td>
+        <td><span class="badge badge-{{ c['status']|lower }}">{{ c['status'] }}</span></td>
+        <td class="nowrap">{{ c['created_at'] }}</td>
+        <td class="nowrap">
+          <a href="{{ url_for('view_contract', contract_id=c['id']) }}" class="btn-mini">Open</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p class="empty">No contracts issued yet. Open a client and issue one from a template.</p>
+{% endif %}
+{% endblock %}

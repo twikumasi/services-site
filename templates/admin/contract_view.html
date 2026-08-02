@@ -1,0 +1,78 @@
+{% extends "admin/base.html" %}
+{% set active = 'contracts' %}
+{% block title %}{{ c['title'] }}{% endblock %}
+
+{% block content %}
+<div class="page-head no-print">
+  <h2>{{ c['title'] }}</h2>
+  <div class="quick-actions">
+    <button onclick="window.print()" class="btn">🖨️ Print / Save as PDF</button>
+    <a href="{{ url_for('edit_contract', contract_id=c['id']) }}" class="btn btn-grey">Edit</a>
+    <a href="{{ url_for('client_profile', client_id=c['client_id']) }}"
+       class="btn btn-grey">Back to Client</a>
+  </div>
+</div>
+
+<div class="no-print contract-bar">
+  <form method="POST" action="{{ url_for('update_contract_status', contract_id=c['id']) }}"
+        class="inline-form">
+    <label class="inline-label">Status
+      <select name="status" onchange="this.form.submit()" class="mini-select">
+        {% for s in statuses %}
+        <option value="{{ s }}" {% if s == c['status'] %}selected{% endif %}>{{ s }}</option>
+        {% endfor %}
+      </select>
+    </label>
+  </form>
+  <span class="hint">
+    Free PythonAnywhere accounts cannot send email, so send this to the client by
+    printing to PDF and attaching it to WhatsApp or your own email.
+  </span>
+  {% if is_admin %}
+  <form method="POST" action="{{ url_for('delete_contract', contract_id=c['id']) }}"
+        class="inline-form"
+        onsubmit="return confirm('Delete this contract permanently?')">
+    <button class="btn-danger">Delete</button>
+  </form>
+  {% endif %}
+</div>
+
+<article class="contract-paper">
+  <header class="contract-head">
+    <img src="{{ url_for('static', filename='logo.svg') }}" alt="" class="contract-logo">
+    <div>
+      <h1>{{ settings.business_name }}</h1>
+      <p>{{ settings.tagline }}</p>
+      <p class="contract-contact">
+        {{ settings.phone }}{% if settings.email %} · {{ settings.email }}{% endif %}
+      </p>
+    </div>
+  </header>
+
+  <h2 class="contract-title">{{ c['title'] }}</h2>
+
+  <table class="contract-meta">
+    <tr><th>Reference</th><td>{{ c['reference'] }}</td>
+        <th>Date</th><td>{{ c['created_at'] }}</td></tr>
+    <tr><th>Client</th><td>{{ c['client_name'] }}</td>
+        <th>Contact</th><td>{{ c['contact_person'] or '—' }}</td></tr>
+    <tr><th>Location</th><td>{{ c['location'] or '—' }}</td>
+        <th>Service</th><td>{{ c['service'] or '—' }}</td></tr>
+  </table>
+
+  <div class="contract-body">{{ c['body'] }}</div>
+
+  <div class="contract-signatures">
+    <div>
+      <p class="sig-line"></p>
+      <p><strong>{{ settings.business_name }}</strong></p>
+      <p class="hint">Name, signature and date</p>
+    </div>
+    <div>
+      <p class="sig-line"></p>
+      <p><strong>{{ c['client_name'] }}</strong></p>
+      <p class="hint">Name, signature and date</p>
+    </div>
+  </div>
+</article>
+{% endblock %}

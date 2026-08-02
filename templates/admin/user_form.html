@@ -1,0 +1,50 @@
+{% extends "admin/base.html" %}
+{% set active = 'users' %}
+{% block title %}{{ 'Edit User' if member else 'Add User' }}{% endblock %}
+
+{% block content %}
+<h2>{{ 'Edit User' if member else 'Add User' }}</h2>
+
+<form method="POST" class="form form-wide">
+  <div class="form-row">
+    <label>Username *
+      <input type="text" name="username" required autocomplete="off"
+             value="{{ member['username'] if member else '' }}">
+      <span class="hint">What they type to sign in. No spaces.</span>
+    </label>
+    <label>Full Name
+      <input type="text" name="full_name"
+             value="{{ member['full_name'] if member else '' }}">
+    </label>
+  </div>
+
+  <label>{{ 'New Password' if member else 'Password *' }}
+    <input type="password" name="password" autocomplete="new-password"
+           {% if not member %}required{% endif %}>
+    <span class="hint">
+      {% if member %}Leave blank to keep their current password.{% endif %}
+      At least 8 characters.
+    </span>
+  </label>
+
+  <label>Role
+    <select name="role">
+      {% for value, label in roles.items() %}
+      <option value="{{ value }}"
+        {% if member and member['role'] == value %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </label>
+
+  <label class="check-label">
+    <input type="checkbox" name="active"
+           {% if not member or member['active'] %}checked{% endif %}>
+    Active — untick to block this person from signing in without deleting them
+  </label>
+
+  <div class="form-actions">
+    <button type="submit" class="btn">{{ 'Save Changes' if member else 'Create User' }}</button>
+    <a href="{{ url_for('admin_users') }}" class="btn btn-grey">Cancel</a>
+  </div>
+</form>
+{% endblock %}

@@ -25,9 +25,18 @@
       <a href="{{ url_for('admin_requests') }}" {% if active == 'requests' %}class="active"{% endif %}>Requests</a>
       <a href="{{ url_for('admin_clients') }}" {% if active == 'clients' %}class="active"{% endif %}>Clients</a>
       <a href="{{ url_for('admin_projects') }}" {% if active == 'projects' %}class="active"{% endif %}>Work Done</a>
+      <a href="{{ url_for('admin_contracts') }}" {% if active == 'contracts' %}class="active"{% endif %}>Contracts</a>
+      {% if is_admin %}
       <a href="{{ url_for('admin_brands') }}" {% if active == 'brands' %}class="active"{% endif %}>Brands</a>
       <a href="{{ url_for('admin_settings') }}" {% if active == 'settings' %}class="active"{% endif %}>Contact</a>
+      <a href="{{ url_for('admin_users') }}" {% if active == 'users' %}class="active"{% endif %}>Team</a>
+      {% endif %}
       <a href="{{ url_for('index') }}" target="_blank">View Site ↗</a>
+      <span class="whoami">
+        {{ user['full_name'] or user['username'] }}
+        <em>{{ 'admin' if is_admin else 'staff' }}</em>
+      </span>
+      <a href="{{ url_for('change_password') }}">Password</a>
       <a href="{{ url_for('admin_logout') }}" class="logout">Log out</a>
     </nav>
   </div>

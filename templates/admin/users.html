@@ -1,0 +1,52 @@
+{% extends "admin/base.html" %}
+{% set active = 'users' %}
+{% block title %}Team{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <h2>Team ({{ rows|length }})</h2>
+  <a href="{{ url_for('user_form') }}" class="btn">+ Add User</a>
+</div>
+
+<div class="alert alert-warn">
+  <strong>Administrator</strong> can do everything — including managing the team,
+  contract wording, contact details, brands, and deleting records.
+  <strong>Staff</strong> can see and work on requests, clients, jobs, and
+  contracts, and can be assigned tasks, but cannot change the business setup or
+  delete anything permanently.
+</div>
+
+<div class="table-wrap">
+  <table class="admin-table">
+    <thead>
+      <tr><th>Username</th><th>Name</th><th>Role</th><th>Status</th><th>Added</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for u in rows %}
+      <tr>
+        <td><strong>{{ u['username'] }}</strong>
+          {% if u['id'] == user['id'] %}<span class="badge">you</span>{% endif %}</td>
+        <td>{{ u['full_name'] }}</td>
+        <td>
+          <span class="badge badge-{{ 'won' if u['role'] == 'admin' else 'contacted' }}">
+            {{ 'Administrator' if u['role'] == 'admin' else 'Staff' }}
+          </span>
+        </td>
+        <td>{{ '✅ Active' if u['active'] else '🚫 Disabled' }}</td>
+        <td class="nowrap">{{ u['created_at'] }}</td>
+        <td class="nowrap">
+          <a href="{{ url_for('user_form', user_id=u['id']) }}" class="btn-mini">Edit</a>
+          {% if u['id'] != user['id'] %}
+          <form method="POST" action="{{ url_for('delete_user', user_id=u['id']) }}"
+                class="inline-form"
+                onsubmit="return confirm('Delete the user “{{ u['username'] }}”?')">
+            <button class="btn-danger" title="Delete">✕</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "admin/base.html" %}
+{% set active = 'contracts' %}
+{% block title %}{{ 'Edit Template' if template else 'New Template' }}{% endblock %}
+
+{% block content %}
+<h2>{{ 'Edit Contract Template' if template else 'New Contract Template' }}</h2>
+
+<form method="POST" class="form form-wide">
+  <div class="form-row">
+    <label>Template Title *
+      <input type="text" name="title" required
+             placeholder="e.g. Preventive Maintenance Agreement"
+             value="{{ template['title'] if template else '' }}">
+    </label>
+    <label>For Which Service
+      <select name="service">
+        <option value="">— any service —</option>
+        {% for s in services %}
+        <option value="{{ s }}"
+          {% if template and template['service'] == s %}selected{% endif %}>{{ s }}</option>
+        {% endfor %}
+      </select>
+    </label>
+  </div>
+
+  <label>Terms &amp; Conditions *
+    <textarea name="body" rows="20" required
+      placeholder="1. Scope of Work&#10;...&#10;&#10;2. Payment Terms&#10;...">{{ template['body'] if template else '' }}</textarea>
+  </label>
+
+  <div class="alert alert-warn">
+    <strong>Placeholders</strong> — type these and they are replaced with real
+    values when you issue the contract to a client:
+    <code>{{ '{{client_name}}' }}</code>,
+    <code>{{ '{{client_contact}}' }}</code>,
+    <code>{{ '{{client_location}}' }}</code>,
+    <code>{{ '{{client_phone}}' }}</code>,
+    <code>{{ '{{client_email}}' }}</code>,
+    <code>{{ '{{company_name}}' }}</code>,
+    <code>{{ '{{company_phone}}' }}</code>,
+    <code>{{ '{{company_email}}' }}</code>,
+    <code>{{ '{{date}}' }}</code>,
+    <code>{{ '{{reference}}' }}</code>.
+  </div>
+
+  <div class="alert alert-error">
+    ⚠️ <strong>Have a lawyer check your terms before you use them commercially.</strong>
+    This tool stores and prints whatever wording you write — it does not provide
+    legal advice, and contract law differs between Sudan, Ghana, and anywhere
+    else you work.
+  </div>
+
+  <div class="form-actions">
+    <button type="submit" class="btn">{{ 'Save Template' if template else 'Create Template' }}</button>
+    <a href="{{ url_for('admin_contracts') }}" class="btn btn-grey">Cancel</a>
+  </div>
+</form>
+{% endblock %}

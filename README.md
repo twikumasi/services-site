@@ -5,18 +5,55 @@ factories and production lines. Flask + SQLite.
 
 ## Admin panel — `/admin`
 
-Password-protected. Default password is `changeme123` — override it by setting
-the `ADMIN_PASSWORD` environment variable (see [DEPLOY.md](DEPLOY.md)). A warning
-banner shows in the admin until you do.
+Sign in with a **username and password**. The first account is `admin`, whose
+password comes from the `ADMIN_PASSWORD` environment variable set in the WSGI
+file (see [DEPLOY.md](DEPLOY.md)). A warning banner shows until you set it.
 
-| Page | What you can do |
-|---|---|
-| **Dashboard** | Counts at a glance, latest requests, quick-add buttons |
-| **Requests** | Read client inquiries, set status (New → Contacted → Quoted → Won → Closed), delete |
-| **Clients** | Add / edit / delete clients, with private notes; tick to show on the website |
-| **Work Done** | Add jobs with a photo, client, machine, date, and description; tick to show on the website |
-| **Brands** | Manage the equipment brands shown on the site; optionally upload a logo image |
-| **Contact** | Edit the business name, tagline, phone, WhatsApp, email, and availability line — changes go live immediately |
+| Page | What you can do | Staff? |
+|---|---|---|
+| **Dashboard** | Counts at a glance, latest requests, quick-add buttons | ✅ |
+| **Requests** | Read inquiries, set status, assign to a team member, filter to "assigned to me" | ✅ |
+| **Clients** | Add / edit clients with a logo and private notes; open a client profile | ✅ |
+| **Work Done** | Add jobs with a photo; share to LinkedIn, Facebook, WhatsApp | ✅ |
+| **Contracts** | Issue contracts to clients from a template, set status, print | ✅ |
+| **Brands** | Manage the equipment brands shown on the site | admin only |
+| **Contact** | Business name, tagline, phone, WhatsApp, email, social pages | admin only |
+| **Team** | Add users, set roles, disable accounts | admin only |
+
+### Roles
+
+- **Administrator** — everything, including the team, contract wording, contact
+  details, brands, and permanently deleting records.
+- **Staff** — day-to-day work: requests, clients, jobs, and contracts. Can be
+  assigned tasks. Cannot change the business setup or delete anything.
+
+Deletes are blocked for staff at the route level, not just hidden in the page, so
+posting the form directly does nothing.
+
+The last remaining administrator cannot be demoted, disabled, or deleted — that
+would lock everyone out permanently. Disabling a user also ends any session they
+already have open.
+
+### Contracts
+
+Write your terms **once per service** under Contracts → New Template. Placeholders
+like `{{client_name}}`, `{{client_location}}`, `{{date}}` and `{{reference}}` are
+filled in when the contract is issued.
+
+Then open a client and issue a contract from a template. **The wording is copied
+at that moment**, so editing a template later never alters a contract already
+issued — important if a client has already signed one.
+
+Each contract gets a reference number, a status (Draft → Sent → Signed →
+Cancelled), a printable sheet with your logo and signature blocks, and lives on
+the client's profile permanently.
+
+**Sending:** free PythonAnywhere accounts cannot send email, so use the
+**Print / Save as PDF** button and attach the file to WhatsApp or your own email.
+
+> The app stores and prints whatever wording you write. It does not provide legal
+> advice — have a lawyer review your terms before using them commercially, since
+> contract law differs between Sudan, Ghana, and elsewhere.
 
 Inquiry phone numbers are stored in full international form (`+20…`). The public
 form pairs a country dropdown with the number and normalises what visitors type,
