@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ lang }}" dir="{{ lang_dir }}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -33,15 +33,17 @@
       <span class="brand-text">{{ settings.business_name }}</span>
     </a>
     <nav>
-      <a href="{{ url_for('index') }}#work">All Work</a>
-      <a href="{{ url_for('index') }}#contact" class="btn btn-small">Request Service</a>
+      <a href="{{ url_for('index') }}#work">{{ t('nav_all_work') }}</a>
+      <a class="lang-btn"
+         href="{{ url_for('set_language', code=other_lang, next=url_for('project_detail', project_id=p['id'])) }}">🌐 {{ other_lang_label }}</a>
+      <a href="{{ url_for('index') }}#contact" class="btn btn-small">{{ t('nav_request') }}</a>
     </nav>
   </div>
 </header>
 
 <section class="section">
   <div class="container detail-wrap">
-    <a class="back-link" href="{{ url_for('index') }}#work">← Back to our work</a>
+    <a class="back-link" href="{{ url_for('index') }}#work">{{ t('work_back') }}</a>
     <h1 class="detail-title">{{ p['title'] }}</h1>
 
     <p class="work-meta detail-meta">
@@ -62,7 +64,7 @@
     {% endif %}
 
     <div class="detail-cta">
-      <a href="{{ url_for('index') }}#contact" class="btn">Request a Similar Service</a>
+      <a href="{{ url_for('index') }}#contact" class="btn">{{ t('work_cta') }}</a>
     </div>
   </div>
 </section>

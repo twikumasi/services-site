@@ -32,7 +32,21 @@
         <a class="btn-mini btn-linkedin"
            href="https://www.linkedin.com/sharing/share-offsite/?url={{ page_url|urlencode }}"
            target="_blank" rel="noopener"
-           title="Open LinkedIn with this job ready to post">in Share</a>
+           title="Share this job on LinkedIn">
+          {% include "_icon_linkedin.svg" %}<span>LinkedIn</span>
+        </a>
+        <a class="btn-mini btn-facebook"
+           href="https://www.facebook.com/sharer/sharer.php?u={{ page_url|urlencode }}"
+           target="_blank" rel="noopener"
+           title="Share this job on Facebook">
+          {% include "_icon_facebook.svg" %}<span>Facebook</span>
+        </a>
+        <a class="btn-mini btn-whatsapp"
+           href="https://wa.me/?text={{ (p['title'] ~ ' — ' ~ page_url)|urlencode }}"
+           target="_blank" rel="noopener"
+           title="Send this job on WhatsApp">
+          {% include "_icon_whatsapp.svg" %}<span>WhatsApp</span>
+        </a>
         <a class="btn-mini" href="{{ url_for('project_detail', project_id=p['id']) }}"
            target="_blank">View</a>
         {% endif %}

@@ -6,9 +6,12 @@ import uuid
 from datetime import datetime
 from functools import wraps
 
-from flask import (Flask, flash, g, jsonify, redirect, render_template,
-                   request, send_from_directory, session, url_for)
+from flask import (Flask, flash, g, jsonify, make_response, redirect,
+                   render_template, request, send_from_directory, session,
+                   url_for)
 from werkzeug.utils import secure_filename
+
+from translations import DEFAULT_LANG, LANGUAGES, translate
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATABASE = os.path.join(BASE_DIR, "requests.db")
@@ -41,63 +44,26 @@ def _load_secret_key():
 
 app.secret_key = _load_secret_key()
 
+# Each service is a pair of translation keys; the template resolves them.
 SERVICES = [
-    {
-        "icon": "🔧",
-        "title": "Machine Troubleshooting & Repair",
-        "desc": "On-site electrical and automation fault finding across production, "
-                "filling, and packaging lines. Fast diagnosis, minimal downtime — "
-                "whatever the brand of equipment.",
-    },
-    {
-        "icon": "💻",
-        "title": "PLC Programming & Upgrades",
-        "desc": "Siemens and Allen-Bradley PLC programming, HMI and SCADA development, "
-                "control system retrofits, and migration off obsolete hardware.",
-    },
-    {
-        "icon": "📦",
-        "title": "Spare Parts Supply",
-        "desc": "Sourcing and supply of genuine and compatible spare parts for "
-                "industrial lines — sensors, drives, servo motors, valves, control "
-                "boards, and hard-to-find legacy items.",
-    },
-    {
-        "icon": "🗓️",
-        "title": "Preventive Maintenance Contracts",
-        "desc": "Scheduled maintenance programs that maximize line availability, "
-                "reduce unplanned stops, and extend the life of your equipment.",
-    },
-    {
-        "icon": "🎓",
-        "title": "Training & Consultancy",
-        "desc": "Hands-on training for plant technicians, line and energy audits, "
-                "spare parts strategy, and commissioning support for new equipment.",
-    },
+    {"icon": "🔧", "key": "svc_repair"},
+    {"icon": "💻", "key": "svc_plc"},
+    {"icon": "📦", "key": "svc_parts"},
+    {"icon": "🗓️", "key": "svc_pm"},
+    {"icon": "🎓", "key": "svc_training"},
 ]
 
 # Equipment manufacturers with direct hands-on experience.
 OEM_BRANDS = ["Sidel", "Krones", "KHS", "SMI", "Sacmi", "Tetra Pak"]
 
 CONTROL_PLATFORMS = [
-    "Siemens S7 / TIA Portal",
-    "Allen-Bradley / Rockwell",
-    "Schneider Electric",
-    "HMI & SCADA Systems",
-    "VFDs & Servo Drives",
-    "Profibus / Profinet / Ethernet-IP",
-    "Instrumentation & Sensors",
-    "Motor Control Centers (MCC)",
+    "plat_siemens", "plat_ab", "plat_schneider", "plat_hmi",
+    "plat_drives", "plat_networks", "plat_instr", "plat_mcc",
 ]
 
 INDUSTRIES = [
-    "Beverage & Bottling",
-    "Food Processing",
-    "Packaging & Palletizing",
-    "Dairy & Juice",
-    "Water Treatment",
-    "General Manufacturing",
-    "Utilities & Plant Services",
+    "ind_beverage", "ind_food", "ind_packaging", "ind_dairy",
+    "ind_water", "ind_manufacturing", "ind_utilities",
 ]
 
 REQUEST_STATUSES = ["New", "Contacted", "Quoted", "Won", "Closed"]
@@ -322,12 +288,38 @@ def tel_link(number):
     return cleaned
 
 
+def current_lang():
+    """Language for this request: ?lang= wins, then the saved cookie."""
+    requested = request.args.get("lang") or request.cookies.get("lang")
+    return requested if requested in LANGUAGES else DEFAULT_LANG
+
+
+@app.route("/lang/<code>")
+def set_language(code):
+    """Switch language and return to the page the visitor came from."""
+    if code not in LANGUAGES:
+        code = DEFAULT_LANG
+    target = request.args.get("next", "")
+    if not (target.startswith("/") and not target.startswith("//")):
+        target = url_for("index")
+    response = make_response(redirect(target))
+    # A year, so the choice sticks between visits.
+    response.set_cookie("lang", code, max_age=31536000, samesite="Lax")
+    return response
+
+
 @app.context_processor
 def inject_globals():
+    lang = current_lang()
     return {
         "using_default_password": ADMIN_PASSWORD == DEFAULT_PASSWORD,
         "settings": get_settings(),
         "tel_link": tel_link,
+        "lang": lang,
+        "lang_dir": LANGUAGES[lang]["dir"],
+        "other_lang": "ar" if lang == "en" else "en",
+        "other_lang_label": LANGUAGES[lang]["switch_to"],
+        "t": lambda key: translate(key, lang),
     }
 
 

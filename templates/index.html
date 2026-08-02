@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ lang }}" dir="{{ lang_dir }}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{{ settings.business_name }} — {{ settings.tagline }}</title>
-<meta name="description" content="Electrical & automation services for factories and production lines: troubleshooting, PLC programming, spare parts, preventive maintenance, and training. Experience with Sidel, Krones, KHS, SMI and more.">
+<meta name="description" content="{{ t('hero_sub')|truncate(180) }}">
 <link rel="icon" href="{{ url_for('static', filename='logo.svg') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
@@ -26,41 +26,39 @@
       <span class="brand-text">{{ settings.business_name }}</span>
     </a>
     <nav>
-      <a href="#services">Services</a>
-      <a href="#expertise">Expertise</a>
-      {% if projects %}<a href="#work">Our Work</a>{% endif %}
-      <a href="#why">Why Us</a>
-      <a href="#contact" class="btn btn-small">Request Service</a>
+      <a href="#services">{{ t('nav_services') }}</a>
+      <a href="#expertise">{{ t('nav_expertise') }}</a>
+      {% if projects %}<a href="#work">{{ t('nav_work') }}</a>{% endif %}
+      <a href="#why">{{ t('nav_why') }}</a>
+      <a class="lang-btn" href="{{ url_for('set_language', code=other_lang, next='/') }}"
+         title="{{ other_lang_label }}">🌐 {{ other_lang_label }}</a>
+      <a href="#contact" class="btn btn-small">{{ t('nav_request') }}</a>
     </nav>
   </div>
 </header>
 
 <section class="hero">
   <div class="container">
-    <p class="hero-kicker">Electrical &amp; Automation Specialists · Factories &amp; Production Lines</p>
-    <h1>Keep Your Production Lines<br>Running at Full Speed</h1>
-    <p class="hero-sub">
-      Hands-on troubleshooting, PLC programming, spare parts, and preventive maintenance
-      for industrial plants — delivered by a team of engineers who have spent years on
-      the production floor, on equipment from Sidel, Krones, KHS, SMI and beyond.
-    </p>
+    <p class="hero-kicker">{{ t('hero_kicker') }}</p>
+    <h1>{{ t('hero_title_1') }}<br>{{ t('hero_title_2') }}</h1>
+    <p class="hero-sub">{{ t('hero_sub') }}</p>
     <div class="hero-actions">
-      <a href="#contact" class="btn">Request Service</a>
-      <a href="#services" class="btn btn-outline">View Services</a>
+      <a href="#contact" class="btn">{{ t('nav_request') }}</a>
+      <a href="#services" class="btn btn-outline">{{ t('hero_view_services') }}</a>
     </div>
   </div>
 </section>
 
 <section id="services" class="section">
   <div class="container">
-    <h2>Services</h2>
-    <p class="section-sub">Everything your line needs, from emergency callouts to long-term care.</p>
+    <h2>{{ t('services_title') }}</h2>
+    <p class="section-sub">{{ t('services_sub') }}</p>
     <div class="cards">
       {% for s in services %}
       <div class="card">
         <div class="card-icon">{{ s.icon }}</div>
-        <h3>{{ s.title }}</h3>
-        <p>{{ s.desc }}</p>
+        <h3>{{ t(s.key) }}</h3>
+        <p>{{ t(s.key ~ '_d') }}</p>
       </div>
       {% endfor %}
     </div>
@@ -69,13 +67,10 @@
 
 <section id="expertise" class="section section-dark">
   <div class="container">
-    <h2>Expertise</h2>
-    <p class="section-sub">
-      Our team brings deep hands-on experience with the industry's leading
-      equipment — and the control systems behind all of it.
-    </p>
+    <h2>{{ t('exp_title') }}</h2>
+    <p class="section-sub">{{ t('exp_sub') }}</p>
 
-    <h3 class="chip-heading">Equipment We Service</h3>
+    <h3 class="chip-heading">{{ t('exp_equipment') }}</h3>
     <div class="brand-wall">
       {% for b in brands %}
       <div class="brand-tile">
@@ -88,21 +83,16 @@
       </div>
       {% endfor %}
     </div>
-    <p class="brand-note">
-      We service equipment from these and other manufacturers — tell us what is
-      on your line. Brand names are shown to indicate the equipment we work on;
-      we are an independent service provider and are not affiliated with, or
-      endorsed by, these manufacturers.
-    </p>
+    <p class="brand-note">{{ t('exp_note') }}</p>
 
-    <h3 class="chip-heading">Control &amp; Automation Systems</h3>
+    <h3 class="chip-heading">{{ t('exp_control') }}</h3>
     <div class="chips">
-      {% for p in platforms %}<span class="chip">{{ p }}</span>{% endfor %}
+      {% for p in platforms %}<span class="chip">{{ t(p) }}</span>{% endfor %}
     </div>
 
-    <h3 class="chip-heading">Industries Served</h3>
+    <h3 class="chip-heading">{{ t('exp_industries') }}</h3>
     <div class="chips">
-      {% for i in industries %}<span class="chip">{{ i }}</span>{% endfor %}
+      {% for i in industries %}<span class="chip">{{ t(i) }}</span>{% endfor %}
     </div>
   </div>
 </section>
@@ -110,8 +100,8 @@
 {% if projects %}
 <section id="work" class="section">
   <div class="container">
-    <h2>Our Work</h2>
-    <p class="section-sub">Real jobs on real lines — a sample of what we've delivered.</p>
+    <h2>{{ t('work_title') }}</h2>
+    <p class="section-sub">{{ t('work_sub') }}</p>
     <div class="work-grid">
       {% for p in projects %}
       <article class="work-card">
@@ -128,7 +118,7 @@
             {% if p['date_done'] %}<span>📅 {{ p['date_done'] }}</span>{% endif %}
           </p>
           {% if p['description'] %}<p class="work-desc">{{ p['description'] }}</p>{% endif %}
-          <span class="work-more">Read more →</span>
+          <span class="work-more">{{ t('work_more') }}</span>
         </div>
         </a>
       </article>
@@ -141,8 +131,8 @@
 {% if clients %}
 <section id="clients" class="section section-light">
   <div class="container">
-    <h2>Clients We Work With</h2>
-    <p class="section-sub">Plants and factories that trust us with their lines.</p>
+    <h2>{{ t('clients_title') }}</h2>
+    <p class="section-sub">{{ t('clients_sub') }}</p>
     <div class="client-grid">
       {% for c in clients %}
       <div class="client-card">
@@ -159,29 +149,16 @@
 
 <section id="why" class="section">
   <div class="container">
-    <h2>Why Work With Us</h2>
-    <p class="section-sub">A team of engineers who have run these lines, not just read about them.</p>
+    <h2>{{ t('why_title') }}</h2>
+    <p class="section-sub">{{ t('why_sub') }}</p>
     <div class="cards cards-3">
+      {% for n, icon in [(1, '🏭'), (2, '⏱️'), (3, '🤝'), (4, '👷')] %}
       <div class="card">
-        <div class="card-icon">🏭</div>
-        <h3>Real Plant Experience</h3>
-        <p>Not just theory — our engineers have spent years solving live breakdowns on high-speed production lines under real pressure, across multiple plants and equipment brands.</p>
+        <div class="card-icon">{{ icon }}</div>
+        <h3>{{ t('why_' ~ n) }}</h3>
+        <p>{{ t('why_' ~ n ~ '_d') }}</p>
       </div>
-      <div class="card">
-        <div class="card-icon">⏱️</div>
-        <h3>Downtime Is the Enemy</h3>
-        <p>Fast response and structured fault-finding to get your line back up in hours, not days.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon">🤝</div>
-        <h3>Honest, Practical Advice</h3>
-        <p>Clear recommendations on repairs, parts, and upgrades — only what your plant actually needs.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon">👷</div>
-        <h3>A Team, Not One Person</h3>
-        <p>Electrical, automation, and mechanical skills under one roof — so we can cover a full line and respond even when one engineer is already on site elsewhere.</p>
-      </div>
+      {% endfor %}
     </div>
   </div>
 </section>
@@ -189,21 +166,18 @@
 <section id="contact" class="section section-dark">
   <div class="container contact-grid">
     <div>
-      <h2>Request a Service</h2>
-      <p class="section-sub">
-        Tell us about your machine and the problem. We'll get back to you quickly
-        with next steps and availability.
-      </p>
+      <h2>{{ t('contact_title') }}</h2>
+      <p class="section-sub">{{ t('contact_sub') }}</p>
       <ul class="contact-list">
         {% if settings.email %}
         <li>📧 <a href="mailto:{{ settings.email }}">{{ settings.email }}</a></li>
         {% endif %}
         {% if settings.phone %}
-        <li>📞 <a href="tel:{{ tel_link(settings.phone) }}">{{ settings.phone }}</a></li>
+        <li>📞 <a href="tel:{{ tel_link(settings.phone) }}" dir="ltr">{{ settings.phone }}</a></li>
         {% endif %}
         {% if settings.whatsapp %}
         <li>💬 <a href="https://wa.me/{{ tel_link(settings.whatsapp)|replace('+','') }}"
-                 target="_blank" rel="noopener">WhatsApp {{ settings.whatsapp }}</a></li>
+                 target="_blank" rel="noopener" dir="ltr">WhatsApp {{ settings.whatsapp }}</a></li>
         {% endif %}
         {% if settings.availability %}
         <li>📍 {{ settings.availability }}</li>
@@ -212,31 +186,33 @@
       {% if settings.linkedin_url or settings.facebook_url %}
       <div class="social-row">
         {% if settings.linkedin_url %}
-        <a class="social-btn" href="{{ settings.linkedin_url }}" target="_blank"
-           rel="noopener">in&nbsp;&nbsp;LinkedIn</a>
+        <a class="social-btn social-linkedin" href="{{ settings.linkedin_url }}"
+           target="_blank" rel="noopener">
+          {% include "_icon_linkedin.svg" %}<span>LinkedIn</span>
+        </a>
         {% endif %}
         {% if settings.facebook_url %}
-        <a class="social-btn" href="{{ settings.facebook_url }}" target="_blank"
-           rel="noopener">f&nbsp;&nbsp;Facebook</a>
+        <a class="social-btn social-facebook" href="{{ settings.facebook_url }}"
+           target="_blank" rel="noopener">
+          {% include "_icon_facebook.svg" %}<span>Facebook</span>
+        </a>
         {% endif %}
       </div>
       {% endif %}
     </div>
     <div>
       {% if sent %}
-      <div class="alert-success">
-        ✅ Your request has been received. We'll contact you as soon as possible.
-      </div>
+      <div class="alert-success">✅ {{ t('form_sent') }}</div>
       {% endif %}
       <form class="form" method="POST" action="{{ url_for('submit_request') }}">
         <div class="form-row">
-          <label>Your Name *<input type="text" name="name" required></label>
-          <label>Company<input type="text" name="company"></label>
+          <label>{{ t('form_name') }} *<input type="text" name="name" required></label>
+          <label>{{ t('form_company') }}<input type="text" name="company"></label>
         </div>
         <div class="form-row">
-          <label>Phone / WhatsApp *
-            <span class="phone-group">
-              <select name="country_code" aria-label="Country code">
+          <label>{{ t('form_phone') }} *
+            <span class="phone-group" dir="ltr">
+              <select name="country_code" aria-label="{{ t('country_label') }}">
                 {% for code, label in country_codes %}
                 <option value="{{ code }}">{{ label }} ({{ code }})</option>
                 {% endfor %}
@@ -244,29 +220,27 @@
               <input type="tel" name="phone" required inputmode="tel"
                      placeholder="111 222 3334">
             </span>
-            <span class="hint">Pick your country, then your number without the leading 0.</span>
+            <span class="hint">{{ t('form_phone_hint') }}</span>
           </label>
-          <label>Email<input type="email" name="email"></label>
+          <label>{{ t('form_email') }}<input type="email" name="email"></label>
         </div>
         <div class="form-row">
-          <label>Machine / Line
-            <input type="text" name="machine" placeholder="e.g. Krones filler, KHS packer, SMI wrapper">
+          <label>{{ t('form_machine') }}
+            <input type="text" name="machine" placeholder="{{ t('form_machine_ph') }}">
           </label>
-          <label>Service Needed
+          <label>{{ t('form_service') }}
             <select name="service">
-              <option>Troubleshooting &amp; Repair</option>
-              <option>PLC Programming &amp; Upgrades</option>
-              <option>Spare Parts Supply</option>
-              <option>Preventive Maintenance Contract</option>
-              <option>Training &amp; Consultancy</option>
-              <option>Other</option>
+              {% for s in services %}
+              <option value="{{ t(s.key) }}">{{ t(s.key) }}</option>
+              {% endfor %}
+              <option value="{{ t('form_other') }}">{{ t('form_other') }}</option>
             </select>
           </label>
         </div>
-        <label>Describe the problem or request
-          <textarea name="message" rows="4" placeholder="What is happening on the machine? Any alarm codes?"></textarea>
+        <label>{{ t('form_message') }}
+          <textarea name="message" rows="4" placeholder="{{ t('form_message_ph') }}"></textarea>
         </label>
-        <button type="submit" class="btn btn-full">Send Request</button>
+        <button type="submit" class="btn btn-full">{{ t('form_submit') }}</button>
       </form>
     </div>
   </div>
@@ -275,7 +249,7 @@
 <footer class="footer">
   <div class="container">
     <p>© 2026 {{ settings.business_name }} — {{ settings.tagline }}</p>
-    <p class="footer-admin"><a href="{{ url_for('admin_login') }}">Staff login</a></p>
+    <p class="footer-admin"><a href="{{ url_for('admin_login') }}">{{ t('footer_staff') }}</a></p>
   </div>
 </footer>
 

@@ -44,6 +44,36 @@ https://ahautomation.pythonanywhere.com
 with the real username and paths. `pythonanywhere_wsgi.py` holds the exact WSGI
 config to paste on the server.
 
+## Arabic / English
+
+A 🌐 button in the header switches the public site between English and Arabic.
+The choice is stored in a `lang` cookie for a year, so returning visitors keep
+their language. `?lang=ar` overrides it for a single request.
+
+Arabic pages render right-to-left (`dir="rtl"`). Phone numbers, dial codes, and
+email addresses are forced back to left-to-right, because an RTL phone number is
+unreadable.
+
+**What is and isn't translated:**
+
+- **Translated:** every fixed word on the public site — navigation, headings,
+  service names and descriptions, industries, control platforms, form labels,
+  buttons, and the non-affiliation notice. All of it lives in `translations.py`.
+- **Not translated:** anything typed into the admin — job titles and
+  descriptions, client names, brand names, and your contact details. These show
+  exactly as entered. Brand names (Sidel, Krones, KHS…) are proper nouns and
+  deliberately stay in Latin script in both languages.
+- **The admin panel is English only.** It is your own working tool, not a
+  customer-facing page.
+
+To add or reword a string, edit the `("English", "العربية")` pair in
+`translations.py`. To add a third language, add it to `LANGUAGES` and extend each
+tuple.
+
+**If you write job descriptions in Arabic**, they will appear in Arabic for
+English visitors too, since job text is never translated. For a bilingual
+portfolio, write both languages into the description field.
+
 ## LinkedIn
 
 Two separate things:

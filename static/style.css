@@ -310,14 +310,18 @@ body {
 /* Social links */
 .social-row { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
 .social-btn {
-  display: inline-block;
+  display: inline-flex; align-items: center; gap: 9px;
   background: rgba(255,255,255,.08);
   border: 1px solid rgba(255,255,255,.22);
   color: var(--white);
   padding: 9px 18px; border-radius: 8px;
   text-decoration: none; font-weight: 600; font-size: .92rem;
+  transition: background .15s, border-color .15s;
 }
-.social-btn:hover { background: var(--accent); color: var(--navy); border-color: var(--accent); }
+.social-icon { width: 1.15em; height: 1.15em; flex-shrink: 0; display: block; }
+/* Hover in each platform's own colour — more recognisable than a generic tint */
+.social-linkedin:hover { background: #0a66c2; border-color: #0a66c2; color: #fff; }
+.social-facebook:hover { background: #1877f2; border-color: #1877f2; color: #fff; }
 
 /* Project detail page */
 .detail-wrap { max-width: 780px; }
@@ -335,9 +339,16 @@ body {
 .detail-desc { font-size: 1.03rem; color: var(--text); margin-bottom: 28px; white-space: pre-line; }
 .detail-cta { padding-top: 8px; }
 
-/* LinkedIn share button in admin */
+/* Share buttons in the admin, in each platform's brand colour */
+.btn-mini { display: inline-flex; align-items: center; gap: 6px; }
+.btn-mini .social-icon { width: 1.05em; height: 1.05em; }
 .btn-linkedin { background: #0a66c2 !important; }
 .btn-linkedin:hover { background: #084e96 !important; }
+.btn-facebook { background: #1877f2 !important; }
+.btn-facebook:hover { background: #1259ba !important; }
+.btn-whatsapp { background: #25d366 !important; color: #06331a !important; }
+.btn-whatsapp:hover { background: #1eb455 !important; }
+.proj-actions { flex-wrap: wrap; row-gap: 8px; }
 
 /* Clients */
 .client-grid {
@@ -509,6 +520,34 @@ body {
 }
 .login-back:hover { color: var(--navy); }
 
+/* ------------------------------------------------------------------ */
+/* Language switch + Arabic (right-to-left)                            */
+/* ------------------------------------------------------------------ */
+.lang-btn {
+  border: 1px solid rgba(255,255,255,.28);
+  border-radius: 999px;
+  padding: 5px 13px !important;
+  font-size: .85rem !important;
+  white-space: nowrap;
+}
+.lang-btn:hover { border-color: var(--accent); color: var(--accent) !important; }
+
+/* Arabic reads right-to-left, so mirror the pieces that are anchored to
+   one side. Grids and flex rows flip on their own. */
+[dir="rtl"] body { text-align: right; }
+[dir="rtl"] .card { border-top-color: var(--accent); }
+[dir="rtl"] .client-card { border-left: none; border-right: 3px solid var(--accent); }
+[dir="rtl"] .form label { text-align: right; }
+[dir="rtl"] .hero, [dir="rtl"] .hero-sub { text-align: center; }
+[dir="rtl"] .admin-table th, [dir="rtl"] .admin-table td { text-align: right; }
+/* Phone numbers, emails and dial codes stay left-to-right even in Arabic —
+   an RTL phone number is unreadable. */
+[dir="rtl"] .phone-group, [dir="rtl"] [dir="ltr"] { direction: ltr; }
+[dir="rtl"] .contact-list a[dir="ltr"] { display: inline-block; }
+/* Arabic text needs a little more line height to stay legible. */
+[dir="rtl"] { line-height: 1.75; }
+[dir="rtl"] .hero h1 { line-height: 1.4; }
+
 /* Mobile */
 @media (max-width: 720px) {
   .hero { padding: 60px 0 70px; }
@@ -524,8 +563,10 @@ body {
   /* Collapse the nav to brand + call-to-action so nothing overlaps */
   .brand { font-size: .88rem; white-space: nowrap; gap: 7px; }
   .brand-logo { width: 26px; height: 26px; }
-  .topbar nav { gap: 0; }
-  .topbar nav a:not(.btn) { display: none; }
+  .topbar nav { gap: 8px; }
+  /* Keep the language switch visible on phones — hide only section links. */
+  .topbar nav a:not(.btn):not(.lang-btn) { display: none; }
+  .lang-btn { padding: 5px 10px !important; font-size: .78rem !important; }
   .topbar nav .btn-small { padding: 7px 12px; font-size: .8rem; white-space: nowrap; }
 
   /* Admin nav must stay usable, so let it wrap instead of hiding links */
